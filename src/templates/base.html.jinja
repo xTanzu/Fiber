@@ -4,12 +4,14 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1">
-		<title>Fibers</title>
+        <title>{% block title %}TsoHa{% endblock %}</title>
 		<link rel="stylesheet" href="">
 		<script src=""></script>
 	</head> 
 	<body> 
-        <h1>Heipparallaa Maailma!!</h1>
+        {% block body %}
+            <h1>TsoHa</h1>
+        {% endblock %}
 	</body>
 </html>
 
