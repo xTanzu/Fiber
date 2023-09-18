@@ -1,5 +1,15 @@
-{% extends 'base.html.jinja' %}
+{% extends "base.html.jinja" %}
+
 {% block title %}Fibers{% endblock %}
+
 {% block body %}
-    <h1>Main Content</h1>
-{% endblock %}
+    <nav class="nav nav_top">
+        {% include "top_nav.html.jinja" %}
+    </nav>
+    <nav class="nav nav_left">
+        {% include "left_nav.html.jinja" %}
+    </nav>
+    <div class="main_content">
+        {% include "main_content.html.jinja" %}
+    </div>
+{% endblock %}              

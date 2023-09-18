@@ -1,0 +1,25 @@
+{% macro message_listing(messages) %}
+    {% if messages %}
+        {% for message in messages %}
+            {{ message_item(author=message.author, time=message.time, content=message.content) }}
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
+
+{% macro message_item(author, time, content) %}
+    <div class="message_item">
+        <div class="message_author message_frag">{{ author }}</div>
+        <div class="message_time message_frag">{{ time }}</div>
+        <div class="message_content message_frag">{{ content }}</div>
+    </div>
+{% endmacro %}
+
+{% macro message_input_form(topic) %}
+    <div class="message_input_form">
+        <form action="/" id="message_input_form" method="POST">
+            <textarea class="message_content" name="message_content" rows="4" cols="80">Write a message...</textarea><br>
+            <input type="hidden" id="topic" name="topic" value="{{ topic }}">
+            <input type="submit" value="Submit">
+        </form>        
+    </div>
+{% endmacro %}

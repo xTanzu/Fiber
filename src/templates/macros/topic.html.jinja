@@ -1,0 +1,18 @@
+{% macro topic_listing(topics) %}
+    {% if topics %}
+        {% for topic in topics %}
+            {{ topic_item(name=topic.name, tags=topic.tags) }}
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
+
+{% macro topic_item(name, tags) %}
+    <div class="topic_item">
+        <div class="topic_name topic_frag">{{ name }}</div>
+        <div class="topic_tags topic_frag">
+            {% for tag in tags %}
+                {{ tag }}, 
+            {% endfor %}
+        </div>
+    </div>    
+{% endmacro %}

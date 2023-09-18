@@ -1,0 +1,10 @@
+{% import "macros/message.html.jinja" as message %}
+{% import "macros/topic.html.jinja" as topic %}
+
+<div class="message_feed">
+    {{ message.message_listing(messages) }}
+    {{ message.message_input_form("generic") }}
+</div>
+<div class="topic_feed">
+    {{ topic.topic_listing(topics) }}
+</div>
