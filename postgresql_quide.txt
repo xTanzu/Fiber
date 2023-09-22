@@ -1,0 +1,40 @@
+View status of postgresql service:
+
+    $ /etc/init.d/postgresql status
+
+Start postgresql server service:
+
+    $ sudo /etc/init.d/postgresql start
+
+Stop postgresql server:
+
+    $ sudo /etc/init.d/postgresql stop
+
+
+
+
+Remove postgresql
+
+        $ sudo apt remove postgresql
+        $ sudo apt autoremove
+
+    Test if packages are still present by:
+
+        $ dpkg -l |grep postgres;
+    
+    If there is packages, coninue by running purge with all packages listed:
+
+        $ sudo apt-get -ÔÇôpurge remove <package> <package> <package> <package>
+
+    For example(from real remove):
+
+        $ sudo apt-get ÔÇô-purge remove postgresql-12 postgresql-client-12 postgresql-client-common postgresql-common
+
+    It will ask if you want to remove the configuration files and database files too, choose what u want.
+
+    Re-check with dpkg if there is packages, there shouldn't.
+    Now remove non-needed dependency packages by running autoremove once more:
+
+        $ sudo apt autoremove
+        
+    And it's done!
