@@ -24,11 +24,11 @@ Remove postgresql
     
     If there is packages, coninue by running purge with all packages listed:
 
-        $ sudo apt-get -ÔÇôpurge remove <package> <package> <package> <package>
+        $ sudo apt-get --purge remove <package> <package> <package> <package>
 
     For example(from real remove):
 
-        $ sudo apt-get ÔÇô-purge remove postgresql-12 postgresql-client-12 postgresql-client-common postgresql-common
+        $ sudo apt-get --purge remove postgresql-12 postgresql-client-12 postgresql-client-common postgresql-common
 
     It will ask if you want to remove the configuration files and database files too, choose what u want.
 
