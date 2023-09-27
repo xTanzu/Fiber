@@ -61,9 +61,18 @@ We now have an active virtual environment. From the same location, install all t
 
 Now we have to install and setup PostgreSQL database, and there is a small script for that (using superuser privileges). Run it from the same location.
 
-~~~./database_setup.sh~~~
+~~~./init_db.sh~~~
 
 If you have PostgreSQL already installed, you need to still run the script so it will create the user and database with the required tables that the application will use.
+The script works with three flags -i|r|u.
+- i-flag for installing postgres using superuser
+- r-flag for resetting existing database
+- u-flag for creating required roles and granting privileges
+
+For example:
+- new installs use ./init_db.sh -iu
+- for resetting database use ./init_db.sh -r
+
 There is a file in the root called postgresql_quide.txt to help you start and stop the postgreSQL service and remove it from your system when you dont need it anymore.
 
 No we have everything we need and we can start the flask development server from the same location, which is the root of the package right in the "Fibers" folder.
