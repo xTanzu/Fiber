@@ -34,10 +34,8 @@ function create_user {
     sudo -u postgres psql -c "GRANT CONNECT ON DATABASE fibers_db TO database_client"
     sudo -u postgres psql -d fibers_db -c "GRANT USAGE ON SCHEMA public TO database_client"
     sudo -u postgres psql -d fibers_db -c "GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO database_client"
-    # Muista muuttaa taulu message monikoksi messages kun uusi taulu on otettu käyttöön
-    sudo -u postgres psql -d fibers_db -c "GRANT SELECT, INSERT, UPDATE, DELETE ON message TO database_client"
-    # Muista ottaa taulu users käyttöön seuraavaan committiin
-    # sudo -u postgres psql -d fibers_db -c "GRANT SELECT, INSERT, UPDATE, DELETE ON users TO database_client"
+    sudo -u postgres psql -d fibers_db -c "GRANT SELECT, INSERT, UPDATE, DELETE ON messages TO database_client"
+    sudo -u postgres psql -d fibers_db -c "GRANT SELECT, INSERT, UPDATE, DELETE ON users TO database_client"
 }
 
 while getopts "iru" option; do

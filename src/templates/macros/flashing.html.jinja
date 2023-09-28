@@ -1,0 +1,11 @@
+{% macro list_flashed_messages() %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashed_messages_list">
+                {% for message in messages %}
+                    <li class="flashed_message_item font_medium_small">{{ message }}</li>
+                {% endfor %}
+            </ul>            
+        {% endif %}
+    {% endwith %}
+{% endmacro %}

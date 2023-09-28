@@ -2,27 +2,35 @@
     --nav_top_height: 3rem;
     --nav_left_width: 12rem;
 
-    --color_main_1: #4D5A82;
-    --color_main_2: #3397b8;
-    --color_accent_1: #F0D8EC;
-    --color_accent_2: #EB8D2D;
-    --color_light_1: #C6D6E4;
-    --color_light_2: #F0D8EC;
+    /* --color_main_1: #3E3E3E; */
+    /* --color_main_1: #858585; */
+    --color_main_1: #707070;
+    --color_accent_1: #A87A87;
+    --color_accent_1_light: #B9939F;
+    --color_accent_2: #8E6D76;
+    --color_accent_3: #6C575E;
+    --color_accent_4: #574D51;
+    --color_light_1: #F5F5F5;
+    --color_light_2: #ebe0e3;
 }
 
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 html {
+    height: 100%;
     font-size: 16px;
     line-height: 1.5;
     font-family: Verdana, Tahoma, Arial, sans-serif;
 }
 
 body {
-    background: var(--color_light_1); /* linear-gradient(90deg, Pink, LightBlue); */
+    position: relative;
+    height: 100%;
+    background-image: linear-gradient(105deg, var(--color_accent_1), #c3a2ac);
     background-attachment: fixed;
 }
 
@@ -53,6 +61,85 @@ body {
     font-size: 0.7rem;
 }
 
+/* -------- General UI rules -------- */
+
+input {
+    font-size: 1rem;
+}
+
+input:focus {
+    outline-width: 0;
+}
+
+ul.flashed_messages_list {
+    list-style-type: none;
+    text-align: center;
+    color: var(--color_main_1);
+    /* opacity: 0.6; */
+}
+
+/* -------- Credentials area -------- */
+
+div.credentials_box {
+    position: absolute;
+    width: 50vmin;
+    /* height: 50vmin; */
+    top: 50vh;
+    left: 50vw;
+    transform: translate3D(-50%, -50%, 0);
+    border-radius: 1rem;
+    background: var(--color_light_2);
+}
+
+div.credentials_form_wrapper {
+    margin: 10%;
+    /* background: var(--color_main_1); */
+}
+
+div.credentials_form_wrapper > h1.credentials_title {
+    text-align: center;
+    margin: 2rem;
+    color: var(--color_main_1);
+}
+
+form.credentials_form > input {
+    margin-bottom: 1rem;
+}
+
+form.credentials_form > input.credentials_field {
+    padding: 0 1rem;
+    width: 100%;
+    height: 2.6rem;
+    border-style: none;
+    border-radius: 1rem;
+    color: var(--color_main_1);
+}
+
+form.credentials_form > input.credentials_field::placeholder {
+    color: var(--color_main_1);
+    opacity: 0.6;
+}
+
+form.credentials_form > input.button {
+    width: 100%;
+    height: 3rem;
+    border-style: none;
+    border-radius: 1rem;
+    color: var(--color_light_2);
+    opacity: 0.7;
+}
+
+form.credentials_form > input.button:hover {
+    opacity: 1;
+}
+
+form.credentials_form > input.button.login {
+    background: var(--color_accent_1); 
+}
+
+form.credentials_form > input.button.register {
+    background: var(--color_main_1);
+}
 
 /* -------- Top Nav -------- */
 
@@ -90,6 +177,21 @@ nav.nav_top > p.login_username {
     transform: translateY(-50%);
     margin-right: var(--nav_top_height);
     float: right;
+    font-weight: bold;
+    color: var(--color_accent_1);
+    /* background: red; */
+}
+
+nav.nav_top > a.logout_button {
+    --height: var(--font_big);
+    display: block;
+    width: max-content;
+    height: var(--height);
+    margin-top: calc(var(--nav_top_height) / 2);
+    transform: translateY(-50%);
+    margin-right: var(--nav_top_height);
+    float: right;
+    text-decoration: none;
     font-weight: bold;
     color: var(--color_accent_1);
     /* background: red; */
