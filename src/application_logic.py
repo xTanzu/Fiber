@@ -6,7 +6,7 @@ import validation
 from exceptions import CredentialsException, DatabaseException
 
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+# from datetime import datetime
 
 import sys
 
@@ -63,9 +63,9 @@ class Application_logic:
         return messages
 
     def submit_new_message(self, message_content: str):
-        format_str = "%Y-%m-%dT%H:%M:%S.%f"
-        time_str = datetime.now().strftime(format_str)
+        # format_str = "%Y-%m-%dT%H:%M:%S.%f"
+        # time_str = datetime.now().strftime(format_str)
         author = session["logged_in_user"]["username"]
-        self.repository.append_new_message(author, time_str, message_content)
+        self.repository.append_new_message(author, message_content)
 
 

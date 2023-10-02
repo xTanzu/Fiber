@@ -10,16 +10,16 @@ import sys
 
 application = Application_logic()
 
-def handleFormInput():
-    message_content = request.form["message_content"]
-    application.submit_new_message(message_content)
-
 @app.route("/", methods=["GET","POST"])
 def index():
     if not application.is_logged_in():
         return redirect("login")
     if request.method == "POST":
-        handleFormInput()
+        message_content = request.form["message_content"]
+        try:
+            application.submit_new_message(message_content)
+        except DatabaseException as e:
+            flash(e)
         return redirect("/")
     messages = application.get_messages()
     return render_template("main.html.jinja", messages=messages)

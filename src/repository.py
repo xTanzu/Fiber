@@ -65,14 +65,14 @@ class Repository:
         messages = result.fetchall()
         return messages
 
-    def append_new_message(self, author: str, time_str: str, content:str):
+    def append_new_message(self, author, content):
         query = """
             INSERT INTO messages 
                 (author, time, content) 
             VALUES 
-                (:author, :time_str, :content)
+                (:author, NOW(), :content)
             """
-        values = {"author":author, "time_str":time_str, "content":content}
+        values = {"author":author, "content":content}
         self.db.session.execute(text(query), values)
         self.db.session.commit()
         return
