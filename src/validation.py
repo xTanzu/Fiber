@@ -5,7 +5,7 @@ username_min_lenght = 6
 username_max_lenght = 64
 password_min_length = 8
 password_max_length = 32
-message_max_length = 5;
+message_max_length = 5000;
 
 special_characters = """!()-.?[]_'~;:!@#$%^&*+="""
 lowercase_letters = string.ascii_lowercase + "åäö"
