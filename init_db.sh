@@ -34,8 +34,12 @@ function create_user {
     sudo -u postgres psql -c "GRANT CONNECT ON DATABASE fibers_db TO database_client"
     sudo -u postgres psql -d fibers_db -c "GRANT USAGE ON SCHEMA public TO database_client"
     sudo -u postgres psql -d fibers_db -c "GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO database_client"
-    sudo -u postgres psql -d fibers_db -c "GRANT SELECT, INSERT, UPDATE, DELETE ON messages TO database_client"
     sudo -u postgres psql -d fibers_db -c "GRANT SELECT, INSERT, UPDATE, DELETE ON users TO database_client"
+    sudo -u postgres psql -d fibers_db -c "GRANT SELECT, INSERT, UPDATE, DELETE ON fibers TO database_client"
+    sudo -u postgres psql -d fibers_db -c "GRANT SELECT, INSERT, UPDATE, DELETE ON tags TO database_client"
+    sudo -u postgres psql -d fibers_db -c "GRANT SELECT, INSERT, UPDATE, DELETE ON messages TO database_client"
+    sudo -u postgres psql -d fibers_db -c "GRANT SELECT, INSERT, UPDATE, DELETE ON user_fibers TO database_client"
+    sudo -u postgres psql -d fibers_db -c "GRANT SELECT, INSERT, UPDATE, DELETE ON fiber_tags TO database_client"
 }
 
 while getopts "iru" option; do

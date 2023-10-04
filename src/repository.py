@@ -22,7 +22,7 @@ class Repository:
             WHERE 
                 username=:username
             """
-        values = {"username":username}
+        values = {"username": username}
         result = self.db.session.execute(text(query), values)
         user = result.fetchone()
         if not user:
@@ -36,7 +36,7 @@ class Repository:
             VALUES
                 (:username, :password)
             """
-        values = {"username":username, "password":password}
+        values = {"username": username, "password": password}
         self.db.session.execute(text(query), values)
         self.db.session.commit()
 
@@ -49,32 +49,39 @@ class Repository:
             WHERE
                 username=:username
             """
-        values = {"username":username}
+        values = {"username": username}
         result = self.db.session.execute(text(query), values)
         user = result.fetchone()
         return user
 
-    def get_messages(self):
+    def get_messages_by_fiber_id(self, fiber_id):
         query = """
             SELECT 
-                author, time, content 
+                M.time, U.username author, M.content 
             FROM 
-                messages
+                messages M 
+            INNER JOIN 
+                users U 
+            ON 
+                M.author_id = U.id 
+            WHERE 
+                M.fiber_id = :fiber_id
             ORDER BY
-                time DESC
-            """
-        result = self.db.session.execute(text(query))
+                M.time DESC
+        """
+        values = {"fiber_id": fiber_id}
+        result = self.db.session.execute(text(query), values)
         messages = result.fetchall()
         return messages
 
-    def append_new_message(self, author, content):
+    def append_new_message(self, author_id, fiber_id, content):
         query = """
             INSERT INTO messages 
-                (author, time, content) 
+                (time, author_id, fiber_id, content) 
             VALUES 
-                (:author, NOW(), :content)
+                (NOW(), :author_id, :fiber_id, :content)
             """
-        values = {"author":author, "content":content}
+        values = {"author_id": author_id, "fiber_id": fiber_id, "content": content}
         self.db.session.execute(text(query), values)
         self.db.session.commit()
 

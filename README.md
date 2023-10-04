@@ -55,9 +55,9 @@ From same location, we'll activate the virtual environment
 
 ```source .venv/bin/activate```
 
-We now have an active virtual environment. From the same location, install all the required dependencies listed in .venv_requirements.txt
+We now have an active virtual environment. From the same location, install all the required dependencies listed in requirements.txt
 
-```pip install -r .venv_requirements.txt```
+```pip install -r requirements.txt```
 
 Now we have to install and setup PostgreSQL database, and there is a small script for that (using superuser privileges). Run it from the same location.
 

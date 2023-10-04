@@ -54,18 +54,24 @@ class Application_logic:
             "id": user.id,
             "username": user.username
         }
+        # Change this later to some better solution
+        session["selected_fiber"] = {
+            "id": 1,
+            "fibername": "general"
+        }
         return True
 
     def logout_user(self):
         del session["logged_in_user"]
 
     def get_messages(self):
-        messages = self.repository.get_messages()
+        selected_fiber_id = session["selected_fiber"]["id"]
+        messages = self.repository.get_messages_by_fiber_id(selected_fiber_id)
         safe_messages = []
         for message in messages:
             safe_message = {
-            "author": message.author,
             "time": message.time,
+            "author": message.author,
             "content": escape(message.content)
             }
             safe_messages.append(safe_message)
@@ -73,7 +79,8 @@ class Application_logic:
 
     def submit_new_message(self, message_content):
         validation.validate_message(message_content)
-        author = session["logged_in_user"]["username"]
-        self.repository.append_new_message(author, message_content)
+        author_id = session["logged_in_user"]["id"]
+        fiber_id = session["selected_fiber"]["id"]
+        self.repository.append_new_message(author_id, fiber_id, message_content)
 
 
