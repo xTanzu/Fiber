@@ -1,10 +1,11 @@
-from exceptions import CredentialsException
+from exceptions import CredentialsException, MessageException
 import string
 
 username_min_lenght = 6
 username_max_lenght = 64
 password_min_length = 8
 password_max_length = 32
+message_max_length = 5;
 
 special_characters = """!()-.?[]_'~;:!@#$%^&*+="""
 lowercase_letters = string.ascii_lowercase + "åäö"
@@ -66,3 +67,11 @@ def validate_password(password):
         raise CredentialsException("password must contain special characters")
     return True
 
+def validate_message(message):
+    if not bool(message):
+        raise MessageException("message is empty")
+    if message.isspace():
+        raise MessageException("message is only space characters")
+    if message_max_length < len(message):
+        raise MessageException(f"message too long, maximum of {message_max_length} characters")
+    return True

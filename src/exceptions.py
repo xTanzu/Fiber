@@ -3,3 +3,6 @@ class CredentialsException(Exception):
 
 class DatabaseException(Exception):
     pass
+
+class MessageException(Exception):
+    pass

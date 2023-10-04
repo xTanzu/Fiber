@@ -368,9 +368,12 @@ form.message_input_form > input.send_button {
 }
 
 form.message_input_form > input.send_button:hover {
-    background-color: var(--color_accent_1);
+    background-color: var(--color_accent_2);
 }
 
+div.message_feed li.flashed_message_item{
+    color: var(--color_light_2);
+}
 
 
 /* -------- Topics -------- */

@@ -77,5 +77,4 @@ class Repository:
         values = {"author":author, "content":content}
         self.db.session.execute(text(query), values)
         self.db.session.commit()
-        return
 

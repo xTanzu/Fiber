@@ -1,3 +1,5 @@
+{% import "macros/flashing.html.jinja" as flashing %}
+
 {% macro message_listing(messages) %}
     {% if messages %}
         {% for message in messages %}
@@ -23,10 +25,11 @@
     </div>
 {% endmacro %}
 
-{% macro message_input_form(topic) %}
+{% macro message_input_form(topic, placeholder_message) %}
     <form action="/" class="message_input_form" method="POST">
-        <textarea class="message_content" name="message_content" placeholder="post on fiber"></textarea><br>
+        <textarea class="message_content" name="message_content" placeholder="post on fiber">{{ placeholder_message }}</textarea><br>
         <input type="hidden" id="topic" name="topic" value="{{ topic }}">
         <input class="send_button" type="submit" value="send">
     </form>        
+    {{ flashing.list_flashed_messages() }}
 {% endmacro %}

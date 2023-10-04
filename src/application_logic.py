@@ -6,6 +6,7 @@ import validation
 from exceptions import CredentialsException, DatabaseException
 
 from werkzeug.security import generate_password_hash, check_password_hash
+from markupsafe import escape
 # from datetime import datetime
 
 import sys
@@ -60,11 +61,18 @@ class Application_logic:
 
     def get_messages(self):
         messages = self.repository.get_messages()
-        return messages
+        safe_messages = []
+        for message in messages:
+            safe_message = {
+            "author": message.author,
+            "time": message.time,
+            "content": escape(message.content)
+            }
+            safe_messages.append(safe_message)
+        return safe_messages
 
-    def submit_new_message(self, message_content: str):
-        # format_str = "%Y-%m-%dT%H:%M:%S.%f"
-        # time_str = datetime.now().strftime(format_str)
+    def submit_new_message(self, message_content):
+        validation.validate_message(message_content)
         author = session["logged_in_user"]["username"]
         self.repository.append_new_message(author, message_content)
 

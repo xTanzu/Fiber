@@ -4,7 +4,7 @@ from flask import redirect, render_template, request, flash, session
 from app import app 
 
 from application_logic import Application_logic
-from exceptions import CredentialsException, DatabaseException
+from exceptions import CredentialsException, DatabaseException, MessageException
 
 import sys
 
@@ -14,15 +14,17 @@ application = Application_logic()
 def index():
     if not application.is_logged_in():
         return redirect("login")
+    placeholder_message = ""
     if request.method == "POST":
         message_content = request.form["message_content"]
         try:
             application.submit_new_message(message_content)
-        except DatabaseException as e:
-            flash(e)
-        return redirect("/")
+            return redirect("/")
+        except (DatabaseException, MessageException) as e:
+            flash(str(e))
+            placeholder_message = message_content
     messages = application.get_messages()
-    return render_template("main.html.jinja", messages=messages)
+    return render_template("main.html.jinja", messages=messages, placeholder_message=placeholder_message)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
