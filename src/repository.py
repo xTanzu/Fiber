@@ -60,6 +60,8 @@ class Repository:
                 author, time, content 
             FROM 
                 messages
+            ORDER BY
+                time DESC
             """
         result = self.db.session.execute(text(query))
         messages = result.fetchall()

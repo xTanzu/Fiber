@@ -1,0 +1,38 @@
+.icon_person_figure {
+    position: absolute;
+    left: -4.5rem;
+    width: 3rem;
+    height: 3rem;
+    box-sizing: border-box;
+    overflow: hidden;
+    border-radius: 50%;
+    border: var(--message_border_width) solid var(--color_main_1);
+    background: var(--color_light_2);
+}
+
+.icon_person_figure::before {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 1rem;
+    height: 1rem;
+    transform: translate3d(-50%,-100%,0);
+    border-radius: 50%;
+    background: var(--color_main_1);
+    /* box-shadow: 0 0 0 1rem green; */
+}
+
+.icon_person_figure::after {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 2rem;
+    height: 2rem;
+    transform: translate3d(-50%,0,0);
+    border-radius: 30%;
+    background: var(--color_main_1);
+}

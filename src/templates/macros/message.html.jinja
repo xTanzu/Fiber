@@ -7,19 +7,26 @@
 {% endmacro %}
 
 {% macro message_item(author, time, content) %}
-    <div class="message_item">
-        <div class="message_author message_frag">{{ author }}</div>
-        <div class="message_time message_frag">{{ time }}</div>
-        <div class="message_content message_frag">{{ content }}</div>
+    {% set is_sent_by_me = (author == session["logged_in_user"]["username"]) %}
+    <div class="message_item {{ "sent_by_me" if is_sent_by_me }}">
+        {% if not is_sent_by_me %}
+            <div class="icon_person_figure"></div>
+        {% endif %}
+        <div class="message_header">
+            <div class="message_author">{{ author }}</div>
+            <div class="message_date">{{ time.strftime("%-d.%m.%Y") }}</div>
+        </div>
+        <div class="message_content">
+            <p>{{ content }}</p>
+        </div>
+        <div class="message_time">{{ time.strftime("%H:%M") }}</div>
     </div>
 {% endmacro %}
 
 {% macro message_input_form(topic) %}
-    <div class="message_input_form">
-        <form action="/" id="message_input_form" method="POST">
-            <textarea class="message_content" name="message_content" rows="4" cols="80">Write a message...</textarea><br>
-            <input type="hidden" id="topic" name="topic" value="{{ topic }}">
-            <input type="submit" value="Submit">
-        </form>        
-    </div>
+    <form action="/" class="message_input_form" method="POST">
+        <textarea class="message_content" name="message_content" placeholder="post on fiber"></textarea><br>
+        <input type="hidden" id="topic" name="topic" value="{{ topic }}">
+        <input class="send_button" type="submit" value="send">
+    </form>        
 {% endmacro %}
