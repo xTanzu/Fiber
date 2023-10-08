@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import redirect, render_template, request, flash, session
+from flask import redirect, url_for, render_template, request, flash, session
 
 from app import app 
 
@@ -13,7 +13,7 @@ application = Application_logic()
 @app.route("/", methods=["GET","POST"])
 def index():
     if not application.is_logged_in():
-        return redirect("/login")
+        return redirect(url_for("login"))
     messages = application.get_all_recent_messages()
     fibers = application.get_users_fibers()
     return render_template("main.html.jinja", messages=messages, fibers=fibers)
@@ -21,7 +21,7 @@ def index():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if application.is_logged_in():
-        return redirect("/")
+        return redirect(url_for("index"))
     placeholder_username = ""
     if request.method == "POST":
         username = request.form["username"]
@@ -31,7 +31,7 @@ def register():
         try:
             application.register_user(username, password, rpt_password)
             application.login_user(username, password)
-            return redirect("/")
+            return redirect(url_for("index"))
         except (ValueError, DatabaseException) as e:
             flash(e)
             placeholder_username = username
@@ -40,14 +40,14 @@ def register():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if application.is_logged_in():
-        return redirect("/")
+        return redirect(url_for("index"))
     placeholder_username = ""
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
         try:
             application.login_user(username, password)
-            return redirect("/")
+            return redirect(url_for("index"))
         except (ValueError, DatabaseException) as e:
             flash(e)
             placeholder_username = username
@@ -56,12 +56,12 @@ def login():
 @app.route("/logout", methods=["GET"])
 def logout():
     application.logout_user()
-    return redirect("/")
+    return redirect(url_for("login"))
 
 @app.route("/create_fiber", methods=["GET", "POST"])
 def create_fiber():
     if not application.is_logged_in():
-        return redirect("/login")
+        return redirect(url_for("login"))
     fibername, description, tags = ("",)*3
     if request.method == "POST":
         fibername = request.form["fibername"]
@@ -78,20 +78,20 @@ def create_fiber():
 @app.route("/fiber/<fiber_id>", methods=["GET", "POST"])
 def view_fiber(fiber_id):
     if not application.is_logged_in():
-        return redirect("/login")
+        return redirect(url_for("login"))
     if not application.user_is_member_in_fiber(fiber_id):
-        return redirect("/")
+        return redirect(url_for("index"))
     placeholder_message = ""
     if request.method == "POST":
         message_content = request.form["message_content"]
         try:
             application.submit_new_message(message_content, fiber_id)
-            return redirect(f"fiber/{fiber_id}")
+            return redirect(url_for("view_fiber", fiber_id=fiber_id))
         except (ValueError, DatabaseException) as e:
             flash(str(e))
             placeholder_message = message_content
     open_fiber = application.get_fiber_by_fiber_id(fiber_id)
-    print(open_fiber["id"], file=sys.stdout)
+    # print(open_fiber["id"], file=sys.stdout)
     messages = application.get_messages_by_fiber_id(fiber_id)
     fibers = application.get_users_fibers()
     return render_template("fiber.html.jinja", open_fiber=open_fiber, messages=messages, fibers=fibers, placeholder_message=placeholder_message)
