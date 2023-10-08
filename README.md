@@ -50,7 +50,7 @@ Now we need to install Python3
 
 And in the root of our package right inside the "Fibers" folder, lets create a virtual environment with venv
 
-```Python3 -m venv .venv```
+```python3 -m venv .venv```
 
 From same location, we'll activate the virtual environment
 
