@@ -24,10 +24,11 @@ If there is is time, I would love to try to make some extra features too:
     activity in it. Let's see
 
 # Current State of Project
-There is a crude layout for the UI that has no sign in functionality yet, so only one user locally. 
-There is only one fiber at the moment, and it is open when the app is initialized. You can send 
-text-only messages in this local fiber, and they will get inserted into a running PostgreSQL database. 
-Messages persist in the database and get loaded on the screen when the main page is loaded.
+There is a sign in functionality that lets you create a simple user  account for the app and sign in. 
+Once signed in, you can create fibers and give them a description, and descriptive tags. You are now the sole 
+member of this fiber. There is no way to add new members yet, but this will change when the next feature is 
+released. This feature will be a search functionality that lets you find fibers to join to by word match and by tags. 
+The layout has been also updated a bit from previous version. Please enjoy.
 
 # How to run the app on your Computer
 The application runs on python 3, so it will run on different operating systems, but this 
