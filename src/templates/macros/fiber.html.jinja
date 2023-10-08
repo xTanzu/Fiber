@@ -1,0 +1,43 @@
+{% import "macros/flashing.html.jinja" as flashing %}
+
+{% macro fiber_listing(fibers) %}
+    {% if fibers %}
+        {% for fiber in fibers %}
+            {{ fiber_item(fiber=fiber) }}
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
+
+{% macro fiber_item(fiber) %}
+    <a class="fiber_item_link" href="/fiber/{{ fiber.id }}">
+        <div class="fiber_item">
+            <div class="fibername">{{ fiber.fibername }}</div>
+            <div class="fiber_description">
+                <p>{{ fiber.description }}</p>
+            </div>
+        </div>
+    </a>
+{% endmacro %}
+
+{% macro add_fiber_button() %}
+    <button class="add_fiber_button" onclick="location.href='/create_fiber'">add new fiber</button>
+{% endmacro %}
+
+{% macro edit_fiber_form(edit_state, fibername, description, tags) %}
+    <div class="edit_fiber_wrapper">
+        <div class="edit_fiber_header">{{ edit_state }} fiber</div>
+        <form action="/{{ edit_state }}_fiber" class="edit_fiber_form" method="POST">
+            <input type="text" class="edit_fiber_field" name="fibername" placeholder="name for your fiber" value="{{ fibername }}"><br>
+            <textarea class="edit_fiber_field" name="fiber_description" placeholder="describe your fiber">{{ description }}</textarea><br>
+            <textarea class="edit_fiber_field" name="fiber_tags" placeholder="give your fiber a list descriptive tags separated by space">{{ tags }}</textarea><br>
+            <input class="edit_fiber_button" type="submit" value="{{ edit_state }}">
+            {{ flashing.list_flashed_messages() }}
+        </form>        
+    </div>
+{% endmacro %}
+
+{% macro fiber_heading(fiber) %}
+    <div class="fiber_heading">
+        <h1>{{ fiber.fibername }}</h1>
+    </div>
+{% endmacro %}

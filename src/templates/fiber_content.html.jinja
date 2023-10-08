@@ -1,0 +1,20 @@
+{% import "macros/message.html.jinja" as message %}
+{% import "macros/fiber.html.jinja" as fiber %}
+
+<div class="content_area">
+    <div class="message_feed">
+        {% if open_fiber %}
+            {{ fiber.fiber_heading(open_fiber) }}
+        {% endif %}
+        {% if edit_state %}
+            {{ fiber.edit_fiber_form(edit_state, fibername, description, tags) }}
+        {% else %}
+            {{ message.message_listing(messages) }}
+            {{ message.message_input_form(open_fiber.id, placeholder_message) }}
+        {% endif %}
+    </div>
+    <div class="fiber_feed">
+        {{ fiber.fiber_listing(fibers) }}
+        {{ fiber.add_fiber_button() }}
+    </div>
+</div>

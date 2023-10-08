@@ -25,10 +25,9 @@
     </div>
 {% endmacro %}
 
-{% macro message_input_form(topic, placeholder_message) %}
-    <form action="/" class="message_input_form" method="POST">
+{% macro message_input_form(fiber_id, placeholder_message) %}
+    <form action="/fiber/{{ fiber_id }}" class="message_input_form" method="POST">
         <textarea class="message_content" name="message_content" placeholder="post on fiber">{{ placeholder_message }}</textarea><br>
-        <input type="hidden" id="topic" name="topic" value="{{ topic }}">
         <input class="send_button" type="submit" value="send">
     </form>        
     {{ flashing.list_flashed_messages() }}

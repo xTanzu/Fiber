@@ -3,6 +3,7 @@
     --nav_left_width: 12rem;
     --message_item_spacing: 2rem;
     --message_border_width: 2px;
+    --fiber_item_height: 6rem;
 
     /* --color_main_1: #3E3E3E; */
     /* --color_main_1: #858585; */
@@ -228,7 +229,7 @@ nav.nav_left {
 
 /* -------- Main Content Area -------- */
 
-div.main_content {
+div.content_area {
     display: flex;
     position: relative;
     top: var(--nav_top_height);
@@ -236,12 +237,12 @@ div.main_content {
     width: calc(100% - var(--nav_left_width));
 }
 
-div.main_content > div:first-child {
+div.content_area > div:first-child {
     width: 75%;
     /* background: var(--); */
 }
 
-div.main_content > div:nth-child(2) {
+div.content_area > div:nth-child(2) {
     width: 25%;
     /* background: var(--color_accent_1_light); */
 }
@@ -251,7 +252,7 @@ div.main_content > div:nth-child(2) {
 
 div.message_feed {
     overflow: hidden;
-    padding: 2rem;
+    padding: 2rem 1rem 2rem 2rem;
 }
 
 div.message_item {
@@ -262,7 +263,7 @@ div.message_item {
     margin-left: calc(2 * var(--message_item_spacing));
     margin-right: var(--message_item_spacing);
     /* padding: calc(var(--message_item_spacing) / 1.25); */
-    border: 2px solid var(--color_main_1);
+    border: var(--message_border_width) solid var(--color_main_1);
     border-radius: 1.4rem 1.4rem 1.4rem 0;
     background: var(--color_light_2);
 }
@@ -349,6 +350,7 @@ form.message_input_form > textarea.message_content {
 
 form.message_input_form > textarea.message_content::placeholder {
     line-height: var(--font_medium);
+    color: var(--color_main_1);
     opacity: 0.8;
 }
 
@@ -360,41 +362,176 @@ form.message_input_form > input.send_button {
     height: 2.4rem;
     border-radius: 1.4rem;
     border: none;
-    font-family: var(--font_family);
     font-size: var(--font_medium);
     font-weight: bold;
     color: var(--color_light_2);
-    background-color: var(--color_accent_2);
+    background: var(--color_accent_2);
 }
 
 form.message_input_form > input.send_button:hover {
-    background-color: var(--color_accent_2);
+    background: var(--color_accent_1);
 }
 
-div.message_feed li.flashed_message_item{
+div.message_feed li.flashed_message_item {
     color: var(--color_light_2);
 }
 
 
-/* -------- Topics -------- */
+/* -------- Fibers listing -------- */
 
-div.topic_feed {
-    padding: 2rem;
+div.fiber_feed{
+    overflow: hidden;
+    padding: 2rem 1rem;
 }
 
-div.topic_item {
-    margin-bottom: 2rem;
-    padding: 1rem;
-    background: SandyBrown;
+div.fiber_item {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: var(--fiber_item_height);
+    margin-bottom: var(--message_item_spacing);
+    border: var(--message_border_width) solid var(--color_accent_2);
+    border-radius: 3rem 1.4rem 1.4rem 3rem;
+    background: var(--color_light_2);
+    /* box-shadow: 5px 5px 10px 0 rgba(50,50,50,0.2); */
 }
 
-div.topic_item > div {
+a.fiber_item_link {
+    text-decoration: none;
+}
+
+div.fiber_item::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: calc(var(--fiber_item_height) - var(--message_border_width));
+    height: calc(var(--fiber_item_height) - var(--message_border_width));
+    /* border: var(--message_border_width) solid var(--color_accent_2); */
+    border-radius: calc(var(--fiber_item_height) / 2);
+    background: var(--color_light_2);
+}
+
+div.fibername {
+    height: 25%;
+    padding-left: calc(var(--fiber_item_height) * 1.1);
+    font-size: 100%;
+    font-weight: bold;
+    background: var(--color_accent_2);
+    color: var(--color_light_2);
+}
+
+div.fiber_description {
+    --lines_visible: 3;
+    --v_padding: 0.3rem;
+    --line_height: 1.4;
+    height: 75%;
+    padding: var(--v_padding) calc(2*var(--v_padding)) var(--v_padding) calc(var(--fiber_item_height) * 1.1);
+    line-height: var(--line_height);
+    font-size: calc((var(--fiber_item_height) * 0.75 - 2 * var(--v_padding)) / var(--lines_visible) / var(--line_height));
+    font-weight: bold;
+    color: var(--color_main_1);
+    position: relative;
+}
+
+div.fiber_description::before {
+    content: "";
+    position: absolute;
+    height: 35%;
+    width: 100%;
+    bottom: 0;
+    pointer-events: none;
+    background: linear-gradient(to bottom, transparent, var(--color_light_2));
+}
+
+button.add_fiber_button {
+    width: 100%;
+    height: 3rem;
+    border: none;
+    border-radius: 1rem;
+    font-size: var(--font_medium);
+    font-weight: bold;
+    color: var(--color_light_2);
+    background: var(--color_accent_2);
+}
+
+button.add_fiber_button:hover {
+    background: var(--color_accent_1);
+}
+
+
+/* -------- Fibers listing -------- */
+
+div.edit_fiber_wrapper {
+    overflow: hidden;
+    width: 100%;
+    border: var(--message_border_width) solid var(--color_accent_2);
+    border-radius: 1.4rem;
+    background: var(--color_light_2);
+}
+
+div.edit_fiber_header {
+    text-align: center;
+    font-size: var(--font_larger);
+    font-weight: bold;
+    color: var(--color_light_2);
+    background: var(--color_accent_2);
+}
+
+/* -------- Fiber view -------- */
+
+div.edit_fiber_wrapper > form {
+    /* width: 80%; */
+    margin: 1rem 2rem;
+    /* background: red; */
+}
+.edit_fiber_field {
+    vertical-align: top;
+    width: 100%;
     margin-bottom: 1rem;
-    background: blue;
+    overflow: hidden;
+    padding: 0.5rem 1.4rem;
+    border: var(--message_border_width) solid var(--color_main_1);
+    border-radius: 1.4rem;
+    resize: none;
+    font-family: var(--font_family);
+    font-size: var(--font_medium);
+    font-weight: bold;
+    color: var(--color_main_1);
+    background: var(--color_light_2);
 }
 
-div.topic_item > div:last-child {
-    margin: 0;
-    background: chartreuse;
+.edit_fiber_field::placeholder {
+    color: var(--color_main_1);
+    opacity: 0.8;
 }
 
+input.edit_fiber_button {
+    width: 100%;
+    height: 3rem;
+    border: none;
+    border-radius: 1rem;
+    font-size: var(--font_medium);
+    font-weight: bold;
+    color: var(--color_light_2);
+    background: var(--color_accent_2);
+}
+
+input.edit_fiber_button:hover {
+    background: var(--color_accent_1);
+}
+
+div.edit_fiber_wrapper li.flashed_message_item {
+    margin-top: 0.7rem;
+    color: var(--color_main_1);
+}
+
+div.fiber_heading {
+    margin-bottom: var(--message_item_spacing);
+    /* background: red; */
+}
+
+div.fiber_heading > h1 {
+    text-align: center;
+}

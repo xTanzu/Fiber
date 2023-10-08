@@ -1,5 +1,7 @@
-<a href="/" class="logo"><p class="font_big">Fibers</p></a>
-<a href="/logout" class="logout_button">logout</a>
-{% if session["logged_in_user"] %}
-    <p class="login_username font_normal">{{ session["logged_in_user"]["username"] }}</p>
-{% endif %}
+<nav class="nav nav_top">
+    <a href="/" class="logo"><p class="font_big">Fibers</p></a>
+    <a href="/logout" class="logout_button">logout</a>
+    {% if session["logged_in_user"] %}
+        <p class="login_username font_normal">{{ session["logged_in_user"]["username"] }}</p>
+    {% endif %}
+</nav>

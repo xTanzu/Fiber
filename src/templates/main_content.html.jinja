@@ -1,10 +1,12 @@
 {% import "macros/message.html.jinja" as message %}
-{% import "macros/topic.html.jinja" as topic %}
+{% import "macros/fiber.html.jinja" as fiber %}
 
-<div class="message_feed">
-    {{ message.message_listing(messages) }}
-    {{ message.message_input_form("generic", placeholder_message) }}
-</div>
-<div class="topic_feed">
-    {{ topic.topic_listing(topics) }}
+<div class="content_area">
+    <div class="message_feed">
+        {{ message.message_listing(messages) }}
+    </div>
+    <div class="fiber_feed">
+        {{ fiber.fiber_listing(fibers) }}
+        {{ fiber.add_fiber_button() }}
+    </div>
 </div>
