@@ -1,6 +1,14 @@
 {% extends "base.html.jinja" %}
 
-{% block title %}Create new Fiber{% endblock %}
+{% block title %}
+    {% if edit_state == "create" %}
+        Create new Fiber
+    {% elif edit_state == "edit" %}
+        Edit Fiber
+    {% else %}
+        {{ open_fiber.fibername }}
+    {% endif %}
+{% endblock %}
 
 {% block body %}
     {% include "top_nav.html.jinja" %}
