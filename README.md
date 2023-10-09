@@ -44,13 +44,15 @@ Next clone the Fibers repository to a suitable location on your machine using Gi
 
 ```git clone https://github.com/xTanzu/Fibers.git```
 
+Now go inside the created folder called "Fibers", this is the root of the package
+
 Now we need to install Python3
 
 ```sudo apt update && sudo apt install python3```
 
 And in the root of our package right inside the "Fibers" folder, lets create a virtual environment with venv
 
-```Python3 -m venv .venv```
+```python3 -m venv .venv```
 
 From same location, we'll activate the virtual environment
 
