@@ -1,13 +1,14 @@
 from flask import session
 
 from repository import Repository
+from entities.fiber import Fiber
+from entities.tag import Tag
+from entities.message import Message
 import validation
 
 from exceptions import DatabaseException
 
 from werkzeug.security import generate_password_hash, check_password_hash
-from markupsafe import escape
-# from datetime import datetime
 
 import sys
 
@@ -31,27 +32,25 @@ class Application_logic:
             raise DatabaseException("error during inserting new user to database")
 
     def login_user(self, username, password):
-        user = self.repository.get_user_by_username(username)
-        if not user:
+        user_row = self.repository.get_user_by_username(username)
+        if not user_row:
             raise ValueError("invalid username")
-        password_hash = user.password
+        user = user_row._asdict()
+        password_hash = user.pop("password")
         if not check_password_hash(password_hash, password):
             raise ValueError("invalid password")
-        session["logged_in_user"] = {
-            "id": user.id,
-            "username": user.username
-        }
+        session["logged_in_user"] = user
 
     def is_logged_in(self):
         session_user = session.get("logged_in_user")
         if not session_user:
             return False
-        if "username" not in session_user or "id" not in session_user:
+        if "username" not in session_user or "user_id" not in session_user:
             return False
         user = self.repository.get_user_by_username(session_user["username"])
         if not user:
             return False
-        if session_user["id"] != user.id:
+        if session_user["user_id"] != user.user_id:
             return False
         return True
 
@@ -59,47 +58,35 @@ class Application_logic:
         del session["logged_in_user"]
 
     def get_all_recent_messages(self):
-        user_id = session["logged_in_user"]["id"]
+        user_id = session["logged_in_user"]["user_id"]
         message_rows = self.repository.get_all_recent_messages_from_all_users_fibers(user_id)
-        messages = [row._asdict() for row in message_rows]
-        safe_messages = list(map(self.escape_message, messages))
-        return safe_messages[:messages_per_page]
+        messages = [Message(**row._asdict()) for row in message_rows]
+        return messages[:messages_per_page]
 
     def get_messages_by_fiber_id(self, fiber_id):
         if not self.user_is_member_in_fiber(fiber_id):
             raise ValueError("not a member")
         message_rows = self.repository.get_messages_by_fiber_id(fiber_id)
-        messages = [row._asdict() for row in message_rows]
-        safe_messages = list(map(self.escape_message, messages))
-        return safe_messages[:messages_per_page]
-
-    def escape_message(self, message):
-        safe_message = message.copy()
-        safe_message["author"] = escape(message["author"])
-        safe_message["content"] = escape(message["content"])
-        # for message in messages:
-        #     safe_message = {
-        #         "time": message.time,
-        #         "author": message.author,
-        #         "content": escape(message.content)
-        #     }
-        #     safe_messages.append(safe_message)
-        return safe_message
+        messages = [Message(**row._asdict()) for row in message_rows]
+        return messages[:messages_per_page]
 
     def submit_new_message(self, message_content, fiber_id):
         if not self.user_is_member_in_fiber(fiber_id):
             raise ValueError("not a member")
         validation.validate_text(message_content, text_type="message")
-        author_id = session["logged_in_user"]["id"]
-        self.repository.append_new_message(author_id, fiber_id, message_content)
+        author_id = session["logged_in_user"]["user_id"]
+        try:
+            self.repository.append_new_message(author_id, fiber_id, message_content)
+        except Exception as e:
+            raise DatabaseException("error during submitting new message") from e
 
     def create_fiber(self, fibername, description, tags):
         validation.validate_name(fibername, name_type="fiber", exra_chars=" ")
         if self.repository.fibername_exists(fibername):
             raise ValueError(f"fibername \"{fibername}\" already exists");
         validation.validate_text(description, text_type="description")
-        owner_id = session["logged_in_user"]["id"]
-        # tags = list(set(tags.split()))
+        owner_id = session["logged_in_user"]["user_id"]
+        tags = list(set(tags.split()))
         try:
             fiber_id = self.repository.insert_new_fiber(owner_id, fibername, description)
             for tag in tags:
@@ -111,60 +98,41 @@ class Application_logic:
 
     def get_fiber_by_fiber_id(self, fiber_id):
         fiber_row = self.repository.get_fiber_by_fiber_id(fiber_id)
-        fiber = fiber_row._asdict()
-        safe_fiber = self.escape_fiber(fiber)
-        return safe_fiber
+        fiber = Fiber(**fiber_row._asdict())
+        return fiber
 
     def get_users_fibers(self):
-        user_id = session["logged_in_user"]["id"]
+        user_id = session["logged_in_user"]["user_id"]
         fiber_rows = self.repository.get_fibers_by_user_id(user_id)
-        fibers = [row._asdict() for row in fiber_rows]
-        safe_fibers = list(map(self.escape_fiber, fibers))
-        return safe_fibers
+        fibers = [Fiber(**row._asdict()) for row in fiber_rows]
+        return fibers
 
     def get_fibers_by_tag_id(self, tag_id):
         fiber_rows = self.repository.get_fibers_by_tag_id(tag_id)
-        fibers = [row._asdict() for row in fiber_rows]
-        safe_fibers = list(map(self.escape_fiber, fibers))
-        return safe_fibers
-
-    def escape_fiber(self, fiber):
-        safe_fiber = fiber.copy()
-        safe_fiber["fibername"] = escape(fiber["fibername"])
-        safe_fiber["description"] = escape(fiber["description"])
-        safe_fiber["tags"] = list(map(escape, fiber["tags"]))
-        return safe_fiber
+        fibers = [Fiber(**row._asdict()) for row in fiber_rows]
+        return fibers
 
     def join_user_to_fiber(self, fiber_id):
-        user_id = session["logged_in_user"]["id"]
+        user_id = session["logged_in_user"]["user_id"]
         fiber = self.repository.get_fiber_by_fiber_id(fiber_id)
         if not fiber:
             raise ValueError("Selected fiber does not exist")
         if self.user_is_member_in_fiber(fiber_id):
             raise ValueError("User is already a member")
         try:
-            print(f"user: {user_id}, fiber: {fiber_id}", file=sys.stdout)
             self.repository.associate_user_with_fiber(user_id, fiber_id)
         except Exception as e:
-            print(e, file=sys.stdout)
             raise DatabaseException("error during inserting user to fiber")
 
     def user_is_member_in_fiber(self, fiber_id):
-        user_id = session["logged_in_user"]["id"]
+        user_id = session["logged_in_user"]["user_id"]
         member_entry = self.repository.get_member_entry(user_id, fiber_id)
         if not member_entry:
             return False
         return True
 
     def get_display_tags(self):
-        # Change this later to a more efficient solution
-        tags = self.repository.get_all_tags()
-        safe_tags = []
-        for tag in tags:
-            safe_tag = {
-                "id": tag.id,
-                "tag": escape(tag.tag)
-            }
-            safe_tags.append(safe_tag)
-        return safe_tags
+        tag_rows = self.repository.get_all_tags()
+        tags = [Tag(**row._asdict()) for row in tag_rows]
+        return tags
 

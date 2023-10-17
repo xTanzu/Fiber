@@ -10,7 +10,7 @@
             {{ fiber.edit_fiber_form(edit_state, placeholder_fiber) }}
         {% else %}
             {{ message.message_listing(messages) }}
-            {{ message.message_input_form(open_fiber.id, placeholder_message) }}
+            {{ message.message_input_form(open_fiber, placeholder_message) }}
         {% endif %}
     </div>
     <div class="fiber_feed">

@@ -3,17 +3,17 @@
 {% macro fiber_listing(fibers) %}
     {% if fibers %}
         {% for fiber in fibers %}
-            {{ fiber_item(fiber=fiber) }}
+            {{ fiber_item(fiber) }}
         {% endfor %}
     {% endif %}
 {% endmacro %}
 
 {% macro fiber_item(fiber) %}
-    <a class="fiber_item_link" href="/fiber/{{ fiber.id }}">
+    <a class="fiber_item_link" href="/fiber/{{ fiber.fiber_id }}">
         <div class="fiber_item">
-            <div class="fibername">{{ fiber.fibername }}</div>
+            <div class="fibername">{{ fiber.markupsafe_fibername() }}</div>
             <div class="fiber_description">
-                <p>{{ fiber.description }}</p>
+                <p>{{ fiber.markupsafe_description() }}</p>
             </div>
         </div>
     </a>
@@ -29,7 +29,7 @@
         <form action="/{{ edit_state }}_fiber" class="edit_fiber_form" method="POST">
             <input type="text" class="edit_fiber_field" name="fibername" placeholder="name for your fiber" value="{{ placeholder_fiber.fibername }}"><br>
             <textarea class="edit_fiber_field" name="fiber_description" placeholder="describe your fiber">{{ placeholder_fiber.description }}</textarea><br>
-            <textarea class="edit_fiber_field" name="fiber_tags" placeholder="give your fiber a list descriptive tags separated by space">{{ " ".join(placeholder_fiber.tags) }}</textarea><br>
+            <textarea class="edit_fiber_field" name="fiber_tags" placeholder="give your fiber a list descriptive tags separated by space">{{ placeholder_fiber.tags }}</textarea><br>
             <input class="edit_fiber_button" type="submit" value="{{ edit_state }}">
             {{ flashing.list_flashed_messages() }}
         </form>        
@@ -38,7 +38,7 @@
 
 {% macro fiber_heading(fiber) %}
     <div class="fiber_heading">
-        <h1>{{ fiber.fibername }}</h1>
+        <h1>{{ fiber.markupsafe_fibername() }}</h1>
     </div>
 {% endmacro %}
 
@@ -54,13 +54,13 @@
 
 {% macro fiber_match_item(fiber) %}
     <div class="fiber_match_item">
-        <div class="fibername">{{ fiber.fibername }}</div>
+        <div class="fibername">{{ fiber.markupsafe_fibername() }}</div>
         <div class="tag_area">
             {% for tag in fiber.tags %}
-                <div class="tag_item">{{ tag }}</div>
+                <div class="tag_item">{{ tag.markupsafe_tag() }}</div>
             {% endfor %}
         </div>
-        <div class="fiber_description">{{ fiber.description }}</div>
-        <button class="join_fiber_button" onclick="location.href='{{ url_for("join_fiber", fiber_id=fiber.id) }}'">Join this Fiber</button>
+        <div class="fiber_description">{{ fiber.markupsafe_description() }}</div>
+        <button class="join_fiber_button" onclick="location.href='{{ url_for("join_fiber", fiber_id=fiber.fiber_id) }}'">Join this Fiber</button>
     </div>    
 {% endmacro %}

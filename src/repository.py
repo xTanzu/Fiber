@@ -27,7 +27,7 @@ class Repository:
     def username_exists(self, username):
         query = """
             SELECT 
-                id 
+                user_id 
             FROM 
                 users 
             WHERE 
@@ -43,7 +43,7 @@ class Repository:
     def get_user_by_username(self, username):
         query = """
             SELECT
-                id, username, password 
+                user_id, username, password 
             FROM
                 users
             WHERE
@@ -67,10 +67,10 @@ class Repository:
 
     def get_messages_by_fiber_id(self, fiber_id):
         query = """
-            SELECT M.time, U.username author, M.content 
+            SELECT M.message_id, M.time, U.username author, M.content 
             FROM messages M 
                 INNER JOIN users U 
-                    ON M.author_id = U.id 
+                    ON M.author_id = U.user_id 
             WHERE M.fiber_id = :fiber_id
             ORDER BY M.time DESC
         """
@@ -81,12 +81,12 @@ class Repository:
 
     def get_all_recent_messages_from_all_users_fibers(self, user_id):
         query = """
-            SELECT M.time, U.username author, M.content 
+            SELECT M.message_id, M.time, U.username author, M.content 
             FROM messages M 
                 INNER JOIN user_fibers UF 
                     ON M.fiber_id = UF.fiber_id 
                 INNER JOIN users U 
-                    ON M.author_id = U.id 
+                    ON M.author_id = U.user_id 
             WHERE UF.user_id = :user_id
             ORDER BY M.time DESC
         """
@@ -102,7 +102,7 @@ class Repository:
             VALUES
                 (:owner_id, :fibername, :description)
             RETURNING
-                id
+                fiber_id
             """
         values = {"owner_id": owner_id, "fibername": fibername, "description": description}
         result = self.db.session.execute(text(query), values)
@@ -121,7 +121,7 @@ class Repository:
     def fibername_exists(self, fibername):
         query = """
             SELECT 
-                id 
+                fiber_id 
             FROM 
                 fibers 
             WHERE 
@@ -136,14 +136,14 @@ class Repository:
 
     def get_fiber_by_fiber_id(self, fiber_id):
         query = """
-            SELECT F.id, F.fibername, F.description, ARRAY_AGG(T.tag) tags 
+            SELECT F.fiber_id, F.owner_id, F.fibername, F.description, ARRAY_AGG(T.tag_id || ' ' || T.tag) tags 
             FROM fibers F 
                 LEFT JOIN fiber_tags FT 
-                ON F.id = FT.fiber_id 
+                ON F.fiber_id = FT.fiber_id 
                     LEFT JOIN tags T 
-                    ON FT.tag_id = T.id 
-            WHERE F.id = :fiber_id 
-            GROUP BY F.id;
+                    ON FT.tag_id = T.tag_id 
+            WHERE F.fiber_id = :fiber_id 
+            GROUP BY F.fiber_id;
         """
         values = {"fiber_id": fiber_id}
         result = self.db.session.execute(text(query), values)
@@ -152,16 +152,16 @@ class Repository:
 
     def get_fibers_by_user_id(self, user_id):
         query = """
-            SELECT F.id, F.fibername, F.description, ARRAY_AGG(T.tag) tags 
+            SELECT F.fiber_id, F.owner_id, F.fibername, F.description, ARRAY_AGG(T.tag_id || ' ' || T.tag) tags 
             FROM fibers F 
                 LEFT JOIN user_fibers UF 
-                ON F.id = UF.fiber_id 
+                ON F.fiber_id = UF.fiber_id 
                     LEFT JOIN fiber_tags FT 
-                    ON F.id = FT.fiber_id 
+                    ON F.fiber_id = FT.fiber_id 
                         LEFT JOIN tags T 
-                        ON FT.tag_id = T.id 
+                        ON FT.tag_id = T.tag_id 
             WHERE UF.user_id = :user_id 
-            GROUP BY F.id
+            GROUP BY F.fiber_id
         """
         values = {"user_id": user_id}
         result = self.db.session.execute(text(query), values)
@@ -170,14 +170,14 @@ class Repository:
 
     def get_fibers_by_tag_id(self, tag_id):
         query = """
-            SELECT F.id, F.fibername, F.description, ARRAY_AGG(T.tag) tags 
+            SELECT F.fiber_id, F.owner_id, F.fibername, F.description, ARRAY_AGG(T.tag_id || ' ' || T.tag) tags 
             FROM fibers F 
                 INNER JOIN fiber_tags FT 
-                ON F.id = FT.fiber_id 
+                ON F.fiber_id = FT.fiber_id 
                     LEFT JOIN tags T 
-                    ON FT.tag_id = T.id 
-            GROUP BY F.id 
-            HAVING MAX(CASE T.id WHEN :tag_id THEN 1 ELSE 0 END) = 1;
+                    ON FT.tag_id = T.tag_id 
+            GROUP BY F.fiber_id 
+            HAVING MAX(CASE T.tag_id WHEN :tag_id THEN 1 ELSE 0 END) = 1;
         """
         values = {"tag_id": tag_id}
         result = self.db.session.execute(text(query), values)
@@ -198,19 +198,19 @@ class Repository:
     def insert_tag_if_not_exists(self, tag):
         query = """
             WITH s AS (
-                SELECT id 
+                SELECT tag_id 
                 FROM tags 
                 WHERE tag = :tag
             ), i AS (
                 INSERT INTO tags (tag) 
                 SELECT :tag 
                 WHERE NOT EXISTS (select 1 from s) 
-                RETURNING id
+                RETURNING tag_id
             ) 
-            SELECT id 
+            SELECT tag_id 
             FROM i 
             UNION ALL 
-            SELECT id 
+            SELECT tag_id 
             FROM s
         """
         values = {"tag": tag}

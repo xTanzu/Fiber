@@ -6,6 +6,8 @@ from app import app
 from application_logic import Application_logic
 from exceptions import DatabaseException
 
+from markupsafe import escape
+
 import sys
 
 application = Application_logic()
@@ -28,14 +30,13 @@ def register():
         username = request.form["username"]
         password = request.form["password"]
         rpt_password = request.form["rpt_password"]
-        # print(f"username:{username}, password:{password}, rpt_password:{rpt_password}", file=sys.stdout)
         try:
             application.register_user(username, password, rpt_password)
             application.login_user(username, password)
             return redirect(url_for("index"))
         except (ValueError, DatabaseException) as e:
             flash(e)
-            placeholder_username = username
+            placeholder_username = escape(username)
     return render_template("credentials.html.jinja", form_type="register", placeholder_username=placeholder_username)
 
 @app.route("/login", methods=["GET", "POST"])
@@ -51,7 +52,7 @@ def login():
             return redirect(url_for("index"))
         except (ValueError, DatabaseException) as e:
             flash(e)
-            placeholder_username = username
+            placeholder_username = escape(username)
     return render_template("credentials.html.jinja", form_type="login", placeholder_username=placeholder_username)
 
 @app.route("/logout", methods=["GET"])
@@ -68,14 +69,14 @@ def create_fiber():
         fiber = {
             "fibername": request.form["fibername"],
             "description": request.form["fiber_description"],
-            "tags": list(set(request.form["fiber_tags"].split()))
+            "tags": request.form["fiber_tags"]
         }
         try:
             fiber_id = application.create_fiber(**fiber)
             return redirect(f"fiber/{fiber_id}")
         except (ValueError, DatabaseException) as e:
             flash(e)
-            placeholder_fiber = application.escape_fiber(fiber)
+            placeholder_fiber = {key:escape(value) for (key,value) in fiber.items()}
     tags = application.get_display_tags()
     fibers = application.get_users_fibers()
     return render_template("fiber.html.jinja", edit_state="create", tags=tags, fibers=fibers, placeholder_fiber=placeholder_fiber)
