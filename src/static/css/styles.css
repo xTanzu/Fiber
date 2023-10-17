@@ -226,6 +226,27 @@ nav.nav_left {
     background: var(--color_accent_1);
 }
 
+div.tag_feed {
+    /* padding: calc(var(--message_item_spacing) / 2); */
+    padding:  0.7rem;
+    /* background: red; */
+}
+
+div.tag_feed > a {
+    text-decoration: none;
+}
+    
+div.tag_feed div.tag_item {
+    margin-bottom: 0.7rem;
+    text-align: center;
+    border: var(--message_border_width) solid var(--color_main_1);
+    border-radius: 1rem; 
+    font-weight: bold;
+    color: var(--color_main_1);
+    background: var(--color_light_2);
+    /* background: blue; */
+}
+
 
 /* -------- Main Content Area -------- */
 
@@ -372,6 +393,10 @@ form.message_input_form > input.send_button:hover {
     background: var(--color_accent_1);
 }
 
+div.message_feed ul.flashed_messages_list {
+    margin-bottom: 1.4rem;
+}
+
 div.message_feed li.flashed_message_item {
     color: var(--color_light_2);
 }
@@ -379,7 +404,7 @@ div.message_feed li.flashed_message_item {
 
 /* -------- Fibers listing -------- */
 
-div.fiber_feed{
+div.fiber_feed {
     overflow: hidden;
     padding: 2rem 1rem;
 }
@@ -413,7 +438,7 @@ div.fiber_item::before {
     background: var(--color_light_2);
 }
 
-div.fibername {
+div.fiber_item > div.fibername {
     height: 25%;
     padding-left: calc(var(--fiber_item_height) * 1.1);
     font-size: 100%;
@@ -422,7 +447,7 @@ div.fibername {
     color: var(--color_light_2);
 }
 
-div.fiber_description {
+div.fiber_item > div.fiber_description {
     --lines_visible: 3;
     --v_padding: 0.3rem;
     --line_height: 1.4;
@@ -435,7 +460,7 @@ div.fiber_description {
     position: relative;
 }
 
-div.fiber_description::before {
+div.fiber_item > div.fiber_description::before {
     content: "";
     position: absolute;
     height: 35%;
@@ -447,9 +472,9 @@ div.fiber_description::before {
 
 button.add_fiber_button {
     width: 100%;
-    height: 3rem;
+    height: 2.8rem;
     border: none;
-    border-radius: 1rem;
+    border-radius: 1.4rem;
     font-size: var(--font_medium);
     font-weight: bold;
     color: var(--color_light_2);
@@ -461,7 +486,7 @@ button.add_fiber_button:hover {
 }
 
 
-/* -------- Fibers listing -------- */
+/* -------- Fiber view -------- */
 
 div.edit_fiber_wrapper {
     overflow: hidden;
@@ -478,8 +503,6 @@ div.edit_fiber_header {
     color: var(--color_light_2);
     background: var(--color_accent_2);
 }
-
-/* -------- Fiber view -------- */
 
 div.edit_fiber_wrapper > form {
     /* width: 80%; */
@@ -509,9 +532,9 @@ div.edit_fiber_wrapper > form {
 
 input.edit_fiber_button {
     width: 100%;
-    height: 3rem;
+    height: 2.8rem;
     border: none;
-    border-radius: 1rem;
+    border-radius: 1.4rem;
     font-size: var(--font_medium);
     font-weight: bold;
     color: var(--color_light_2);
@@ -525,6 +548,7 @@ input.edit_fiber_button:hover {
 div.edit_fiber_wrapper li.flashed_message_item {
     margin-top: 0.7rem;
     color: var(--color_main_1);
+    /* color: red */
 }
 
 div.fiber_heading {
@@ -535,3 +559,72 @@ div.fiber_heading {
 div.fiber_heading > h1 {
     text-align: center;
 }
+
+
+/* -------- Fiber match view -------- */
+
+div.fiber_match_feed {
+    padding: 2rem 1rem 1rem 2rem;
+    /* background: red; */
+}
+
+div.fiber_match_item {
+    margin-bottom: var(--message_item_spacing);
+    border: var(--message_border_width) solid var(--color_main_1);
+    border-radius: 1.4rem;
+    background: var(--color_light_2);
+}
+
+div.fiber_match_item > div.fibername {
+    border-radius: 1.2rem 1.2rem 0 0;
+    text-align: center;
+    font-weight: bold;
+    font-size: var(--font_larger);
+    color: var(--color_light_2);
+    background: var(--color_main_1);
+}
+
+div.fiber_match_item > div.tag_area {
+    padding: 0.5rem;
+    display: flex;
+    flex-flow: row wrap;
+    /* justify-content: space-between; */
+    justify-content: space-around;
+    /* justify-content: center; */
+    gap: 0.4rem 0.8rem;
+    /* background: red; */
+}
+
+div.fiber_match_item > div.tag_area > div.tag_item {
+    /* margin: 0.3rem; */
+    padding: 0 0.5rem;
+    border: var(--message_border_width) solid var(--color_main_1);
+    border-radius: 1rem;
+    font-weight: bold;
+    color: var(--color_light_2);
+    background: var(--color_accent_2);
+}
+
+div.fiber_match_item > div.fiber_description {
+    padding: calc(var(--message_item_spacing) / 1.5);
+    font-size: var(--font_medium);
+    font-weight: bold;
+    line-height: calc(1.25 * var(--font_medium));
+    color: var(--color_main_1);
+    /* background: red; */
+}
+
+div.fiber_match_item > button.join_fiber_button {
+    width: calc(100% - (2 * 1.4rem));
+    height: 2.8rem; 
+    margin: 1.4rem;
+    border-style: none;
+    border-radius: 1.4rem;
+    font-size: var(--font_medium);
+    font-weight: bold;
+    color: var(--color_light_2);
+    background: var(--color_accent_2);
+}
+
+div.fiber_match_item > button.join_fiber_button:hover {
+    background: var(--color_accent_1);

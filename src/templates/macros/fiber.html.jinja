@@ -20,16 +20,16 @@
 {% endmacro %}
 
 {% macro add_fiber_button() %}
-    <button class="add_fiber_button" onclick="location.href='/create_fiber'">add new fiber</button>
+    <button class="add_fiber_button" onclick="location.href='{{ url_for("create_fiber") }}'">add new fiber</button>
 {% endmacro %}
 
-{% macro edit_fiber_form(edit_state, fibername, description, tags) %}
+{% macro edit_fiber_form(edit_state, placeholder_fiber) %}
     <div class="edit_fiber_wrapper">
         <div class="edit_fiber_header">{{ edit_state }} fiber</div>
         <form action="/{{ edit_state }}_fiber" class="edit_fiber_form" method="POST">
-            <input type="text" class="edit_fiber_field" name="fibername" placeholder="name for your fiber" value="{{ fibername }}"><br>
-            <textarea class="edit_fiber_field" name="fiber_description" placeholder="describe your fiber">{{ description }}</textarea><br>
-            <textarea class="edit_fiber_field" name="fiber_tags" placeholder="give your fiber a list descriptive tags separated by space">{{ tags }}</textarea><br>
+            <input type="text" class="edit_fiber_field" name="fibername" placeholder="name for your fiber" value="{{ placeholder_fiber.fibername }}"><br>
+            <textarea class="edit_fiber_field" name="fiber_description" placeholder="describe your fiber">{{ placeholder_fiber.description }}</textarea><br>
+            <textarea class="edit_fiber_field" name="fiber_tags" placeholder="give your fiber a list descriptive tags separated by space">{{ " ".join(placeholder_fiber.tags) }}</textarea><br>
             <input class="edit_fiber_button" type="submit" value="{{ edit_state }}">
             {{ flashing.list_flashed_messages() }}
         </form>        
@@ -40,4 +40,27 @@
     <div class="fiber_heading">
         <h1>{{ fiber.fibername }}</h1>
     </div>
+{% endmacro %}
+
+{% macro fiber_match_listing(fiber_matches) %}
+    {% if fiber_matches %}
+        {% for fiber in fiber_matches %}
+            {{ fiber_match_item(fiber) }}
+        {% endfor %}
+    {% else %}
+        <p>No matches</p>
+    {% endif %}
+{% endmacro %}
+
+{% macro fiber_match_item(fiber) %}
+    <div class="fiber_match_item">
+        <div class="fibername">{{ fiber.fibername }}</div>
+        <div class="tag_area">
+            {% for tag in fiber.tags %}
+                <div class="tag_item">{{ tag }}</div>
+            {% endfor %}
+        </div>
+        <div class="fiber_description">{{ fiber.description }}</div>
+        <button class="join_fiber_button" onclick="location.href='{{ url_for("join_fiber", fiber_id=fiber.id) }}'">Join this Fiber</button>
+    </div>    
 {% endmacro %}

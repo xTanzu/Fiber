@@ -1,0 +1,12 @@
+{% import "macros/fiber.html.jinja" as fiber %}
+
+<div class="content_area">
+    <div class="fiber_match_feed">
+        {{ fiber.fiber_match_listing(fiber_matches) }}
+    </div>
+    <div class="fiber_feed">
+        {{ fiber.fiber_listing(fibers) }}
+        {{ fiber.add_fiber_button() }}
+    </div>
+</div>
+

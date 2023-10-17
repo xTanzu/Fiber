@@ -1,3 +1,11 @@
 <nav class="nav nav_left">
-    <p>I am a left nav!</p>
+    <div class="tag_feed">
+        {% if tags %}
+            {% for tag in tags %}
+                <a href="{{ url_for('fibers_by_tag', tag_id=tag.id) }}">
+                    <div class="tag_item">{{ tag.tag }}</div>
+                </a>
+            {% endfor %}
+        {% endif %}
+    </div>
 </nav>

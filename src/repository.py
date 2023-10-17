@@ -13,6 +13,17 @@ class Repository:
         app.config["SQLALCHEMY_DATABASE_URI"] = db_url
         self.db = SQLAlchemy(app)
 
+    def insert_new_user(self, username, password):
+        query = """
+            INSERT INTO users
+                (username, password)
+            VALUES
+                (:username, :password)
+            """
+        values = {"username": username, "password": password}
+        self.db.session.execute(text(query), values)
+        self.db.session.commit()
+
     def username_exists(self, username):
         query = """
             SELECT 
@@ -29,17 +40,6 @@ class Repository:
             return False
         return True
 
-    def insert_new_user(self, username, password):
-        query = """
-            INSERT INTO users
-                (username, password)
-            VALUES
-                (:username, :password)
-            """
-        values = {"username": username, "password": password}
-        self.db.session.execute(text(query), values)
-        self.db.session.commit()
-
     def get_user_by_username(self, username):
         query = """
             SELECT
@@ -53,6 +53,31 @@ class Repository:
         result = self.db.session.execute(text(query), values)
         user = result.fetchone()
         return user
+
+    def append_new_message(self, author_id, fiber_id, content):
+        query = """
+            INSERT INTO messages 
+                (time, author_id, fiber_id, content) 
+            VALUES 
+                (NOW(), :author_id, :fiber_id, :content)
+            """
+        values = {"author_id": author_id, "fiber_id": fiber_id, "content": content}
+        self.db.session.execute(text(query), values)
+        self.db.session.commit()
+
+    def get_messages_by_fiber_id(self, fiber_id):
+        query = """
+            SELECT M.time, U.username author, M.content 
+            FROM messages M 
+                INNER JOIN users U 
+                    ON M.author_id = U.id 
+            WHERE M.fiber_id = :fiber_id
+            ORDER BY M.time DESC
+        """
+        values = {"fiber_id": fiber_id}
+        result = self.db.session.execute(text(query), values)
+        messages = result.fetchall()
+        return messages
 
     def get_all_recent_messages_from_all_users_fibers(self, user_id):
         query = """
@@ -69,31 +94,6 @@ class Repository:
         result = self.db.session.execute(text(query), values)
         messages = result.fetchall()
         return messages
-
-    def get_messages_by_fiber_id(self, fiber_id):
-        query = """
-            SELECT M.time, U.username author, M.content 
-            FROM messages M 
-                INNER JOIN users U 
-                    ON M.author_id = U.id 
-            WHERE M.fiber_id = :fiber_id
-            ORDER BY M.time DESC
-        """
-        values = {"fiber_id": fiber_id}
-        result = self.db.session.execute(text(query), values)
-        messages = result.fetchall()
-        return messages
-
-    def append_new_message(self, author_id, fiber_id, content):
-        query = """
-            INSERT INTO messages 
-                (time, author_id, fiber_id, content) 
-            VALUES 
-                (NOW(), :author_id, :fiber_id, :content)
-            """
-        values = {"author_id": author_id, "fiber_id": fiber_id, "content": content}
-        self.db.session.execute(text(query), values)
-        self.db.session.commit()
 
     def insert_new_fiber(self, owner_id, fibername, description):
         query = """
@@ -136,44 +136,64 @@ class Repository:
 
     def get_fiber_by_fiber_id(self, fiber_id):
         query = """
-            SELECT id, fibername, description 
-            FROM fibers 
-            WHERE id = :fiber_id;
+            SELECT F.id, F.fibername, F.description, ARRAY_AGG(T.tag) tags 
+            FROM fibers F 
+                LEFT JOIN fiber_tags FT 
+                ON F.id = FT.fiber_id 
+                    LEFT JOIN tags T 
+                    ON FT.tag_id = T.id 
+            WHERE F.id = :fiber_id 
+            GROUP BY F.id;
         """
         values = {"fiber_id": fiber_id}
         result = self.db.session.execute(text(query), values)
         fiber = result.fetchone()
         return fiber
 
-    def insert_new_user_to_fiber(user_id, fiber_id):
-        # query = """
-        #     INSERT INTO user_fibers
-        #         (user_id, fiber_id)
-        #     VALUES
-        #         (:user_id, :fiber_id)
-        #     """
-        # values = {"user_id": user_id, "fiber_id": fiber_id}
-        # self.db.session.execute(text(query), values)
-        # self.db.session.commit()
-        pass
-
     def get_fibers_by_user_id(self, user_id):
         query = """
-            SELECT 
-                F.id, F.fibername, F.description 
-            FROM 
-                user_fibers UF 
-            INNER JOIN 
-                fibers F 
-            ON 
-                UF.fiber_id = F.id 
-            WHERE 
-                UF.user_id = :user_id
+            SELECT F.id, F.fibername, F.description, ARRAY_AGG(T.tag) tags 
+            FROM fibers F 
+                LEFT JOIN user_fibers UF 
+                ON F.id = UF.fiber_id 
+                    LEFT JOIN fiber_tags FT 
+                    ON F.id = FT.fiber_id 
+                        LEFT JOIN tags T 
+                        ON FT.tag_id = T.id 
+            WHERE UF.user_id = :user_id 
+            GROUP BY F.id
         """
         values = {"user_id": user_id}
         result = self.db.session.execute(text(query), values)
         fibers = result.fetchall()
         return fibers
+
+    def get_fibers_by_tag_id(self, tag_id):
+        query = """
+            SELECT F.id, F.fibername, F.description, ARRAY_AGG(T.tag) tags 
+            FROM fibers F 
+                INNER JOIN fiber_tags FT 
+                ON F.id = FT.fiber_id 
+                    LEFT JOIN tags T 
+                    ON FT.tag_id = T.id 
+            GROUP BY F.id 
+            HAVING MAX(CASE T.id WHEN :tag_id THEN 1 ELSE 0 END) = 1;
+        """
+        values = {"tag_id": tag_id}
+        result = self.db.session.execute(text(query), values)
+        fibers = result.fetchall()
+        return fibers
+
+    def associate_user_with_fiber(self, user_id, fiber_id):
+        query = """
+            INSERT INTO user_fibers
+                (user_id, fiber_id)
+            VALUES
+                (:user_id, :fiber_id)
+            """
+        values = {"user_id": user_id, "fiber_id": fiber_id}
+        self.db.session.execute(text(query), values)
+        self.db.session.commit()
 
     def insert_tag_if_not_exists(self, tag):
         query = """
@@ -199,6 +219,15 @@ class Repository:
         self.db.session.commit()
         return tag_id
 
+    def get_all_tags(self):
+        query = """
+            SELECT * 
+            FROM tags
+        """
+        result = self.db.session.execute(text(query))
+        tags = result.fetchall()
+        return tags
+
     def associate_fiber_with_tag(self, fiber_id, tag_id):
         query = """
             INSERT INTO fiber_tags
@@ -223,5 +252,5 @@ class Repository:
         """
         values = {"user_id":user_id, "fiber_id":fiber_id}
         result = self.db.session.execute(text(query), values)
-        member_entry = result.fetchone()[0]
+        member_entry = result.fetchone()
         return member_entry

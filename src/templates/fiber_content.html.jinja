@@ -7,7 +7,7 @@
             {{ fiber.fiber_heading(open_fiber) }}
         {% endif %}
         {% if edit_state %}
-            {{ fiber.edit_fiber_form(edit_state, fibername, description, tags) }}
+            {{ fiber.edit_fiber_form(edit_state, placeholder_fiber) }}
         {% else %}
             {{ message.message_listing(messages) }}
             {{ message.message_input_form(open_fiber.id, placeholder_message) }}

@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 
 from os import getenv
 
-import sys
 
 load_dotenv()
 
