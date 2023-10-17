@@ -24,11 +24,16 @@ If there is is time, I would love to try to make some extra features too:
     activity in it. Let's see
 
 # Current State of Project
-There is a sign in functionality that lets you create a simple user  account for the app and sign in. 
-Once signed in, you can create fibers and give them a description, and descriptive tags. You are now the sole 
-member of this fiber. There is no way to add new members yet, but this will change when the next feature is 
-released. This feature will be a search functionality that lets you find fibers to join to by word match and by tags. 
-The layout has been also updated a bit from previous version. Please enjoy.
+There is a sign in functionality that lets you create a simple user account for the app and sign in. 
+Once signed in, you can create fibers and give them a description, and descriptive tags. You are now 
+the owner of this fiber. The tags that you added to the fiber act as handles to the fiber, and others 
+can find your fiber throught them. A set of all known tags in the application are listed on the left 
+navigation bar in the UI. By clicking a tag you get to see a list of fibers associated with that tag. 
+Here you can join to other peoples fibers that you find interesting. You can now chat with people in 
+the fiber, and only members of that fiber see your messages. At the moment you cannot remove yourself 
+from the fiber, but this functionality is coming later this week. There is also going to be a search 
+functionality that lets you do word search on the name and description to find suitable fibers. 
+Please enjoy!
 
 # How to run the app on your Computer
 The application runs on python 3, so it will run on different operating systems, but this 
