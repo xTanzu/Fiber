@@ -36,3 +36,29 @@
     border-radius: 30%;
     background: var(--color_main_1);
 }
+
+.icon_looking_glass::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0.5rem;
+    left: 0.8rem;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 1rem;
+    background: var(--color_light_2);
+    box-shadow: 0 0 0 0.2rem var(--color_main_1);
+}
+
+.icon_looking_glass::after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0.5rem;
+    left: 0.8rem;
+    width: 0.6rem;
+    height: 0.2rem;
+    transform: translate(0.7rem, 0.9rem) rotate(45deg);
+    background: var(--color_main_1);
+}
+

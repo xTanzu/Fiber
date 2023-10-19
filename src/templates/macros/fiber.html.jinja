@@ -9,7 +9,7 @@
 {% endmacro %}
 
 {% macro fiber_item(fiber) %}
-    <a class="fiber_item_link" href="/fiber/{{ fiber.fiber_id }}">
+    <a class="no_decoration" href="{{ url_for("view_fiber", fiber_id=fiber.fiber_id) }}">
         <div class="fiber_item">
             <div class="fibername">{{ fiber.markupsafe_fibername() }}</div>
             <div class="fiber_description">
@@ -37,27 +37,44 @@
 {% endmacro %}
 
 {% macro fiber_heading(fiber) %}
-    <div class="fiber_heading">
-        <h1>{{ fiber.markupsafe_fibername() }}</h1>
-    </div>
+    <div class="fiber_overview_item">
+        <div class="fibername">{{ fiber.markupsafe_fibername() }}</div>
+        <div class="tag_area">
+            {% for tag in fiber.tags %}
+                <a class="no_decoration" href="{{ url_for("fibers_by_tag", tag_id=tag.tag_id) }}">
+                    <div class="tag_item">{{ tag.markupsafe_tag() }}</div>
+                </a>                
+            {% endfor %}
+        </div>
+        <div class="fiber_description">{{ fiber.markupsafe_description() }}</div>
+    </div>    
 {% endmacro %}
 
-{% macro fiber_match_listing(fiber_matches) %}
+{% macro fiber_match_listing(fiber_matches, search_term) %}
+    <div class="search_term_heading">
+        {% if fiber_matches %}
+            <h1>{{ search_term }}</h1>
+        {% elif search_term %}
+            <h1>No matches for "{{ search_term }}"</h1>
+        {% else  %}
+            <h1>No matches</h1>
+        {% endif %}
+    </div>
     {% if fiber_matches %}
         {% for fiber in fiber_matches %}
             {{ fiber_match_item(fiber) }}
         {% endfor %}
-    {% else %}
-        <p>No matches</p>
     {% endif %}
 {% endmacro %}
 
 {% macro fiber_match_item(fiber) %}
-    <div class="fiber_match_item">
+    <div class="fiber_overview_item">
         <div class="fibername">{{ fiber.markupsafe_fibername() }}</div>
         <div class="tag_area">
             {% for tag in fiber.tags %}
-                <div class="tag_item">{{ tag.markupsafe_tag() }}</div>
+                <a class="no_decoration" href="{{ url_for("fibers_by_tag", tag_id=tag.tag_id) }}">
+                    <div class="tag_item">{{ tag.markupsafe_tag() }}</div>
+                </a>                
             {% endfor %}
         </div>
         <div class="fiber_description">{{ fiber.markupsafe_description() }}</div>

@@ -112,6 +112,11 @@ class Application_logic:
         fibers = [Fiber(**row._asdict()) for row in fiber_rows]
         return fibers
 
+    def get_fibers_by_search_term(self, search_term):
+        fiber_rows = self.repository.get_fibers_by_search_term(search_term)
+        fibers = [Fiber(**row._asdict()) for row in fiber_rows]
+        return fibers
+
     def join_user_to_fiber(self, fiber_id):
         user_id = session["logged_in_user"]["user_id"]
         fiber = self.repository.get_fiber_by_fiber_id(fiber_id)
@@ -136,3 +141,7 @@ class Application_logic:
         tags = [Tag(**row._asdict()) for row in tag_rows]
         return tags
 
+    def get_tag_by_tag_id(self, tag_id):
+        tag_row = self.repository.get_tag_by_tag_id(tag_id)
+        tag = Tag(**tag_row._asdict()) if tag_row else None
+        return tag

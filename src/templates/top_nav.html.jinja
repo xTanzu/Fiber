@@ -1,5 +1,11 @@
 <nav class="nav nav_top">
     <a href="/" class="logo"><p class="font_big">Fibers</p></a>
+    <form role="search" class="search_form" action="{{ url_for("search") }}" method="GET">
+        <div class="search_field_container icon_looking_glass">
+            <input type="text" class="search_field" name="query" placeholder="search for fibers...">
+        </div>
+        <input type="submit" class="search_button" value="search">
+    </form>    
     <a href="/logout" class="logout_button">logout</a>
     {% if session["logged_in_user"] %}
         <p class="login_username font_normal">{{ session["logged_in_user"]["username"] }}</p>

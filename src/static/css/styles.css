@@ -20,6 +20,7 @@
     --bg_gradient_1: linear-gradient(105deg, var(--color_accent_1), var(--color_accent_1_light));
 
     --font_huge: 3rem;
+    --font_hugeish: 2.4rem;
     --font_big: 1.8rem;
     --font_medium_large: 1.6rem;
     --font_larger: 1.4rem;
@@ -93,6 +94,10 @@ ul.flashed_messages_list {
     text-align: center;
     color: var(--color_main_1);
     /* opacity: 0.6; */
+}
+
+a.no_decoration {
+    text-decoration: none;
 }
 
 /* -------- Credentials area -------- */
@@ -185,21 +190,41 @@ nav.nav_top > a.logo {
     /* background: red; */
 }
 
-nav.nav_top > p.login_username {
-    --height: var(--font_big);
-    display: block;
-    width: max-content;
-    height: var(--height);
-    margin-top: calc(var(--nav_top_height) / 2);
-    transform: translateY(-50%);
-    margin-right: var(--nav_top_height);
-    float: right;
-    font-weight: bold;
-    color: var(--color_light_2);
+nav.nav_top > a.logo > p {
+    position: relative;
+    bottom: 0.4rem;
+}
+
+nav.nav_top form.search_form {
+    --clearance: 2rem;
+    position: absolute;
+    width: calc((100% - var(--nav_left_width)) * 0.75 - (2 * var(--clearance))); 
+    top: calc(var(--nav_top_height) / 2);
+    left: calc(var(--nav_left_width) + var(--clearance));
     /* background: red; */
 }
 
-nav.nav_top > a.logout_button {
+nav.nav_top form.search_form div.search_field_container {
+    transform: translateY(-50%);
+    /* background: green; */
+}
+
+nav.nav_top form.search_form input.search_field {
+    padding: 0 2.5rem;
+    width: 100%;
+    height: 2rem;
+    border-style: none;
+    border-radius: 1rem;
+    color: var(--color_main_1);
+    background: var(--color_light_2);
+    /* background: blue; */
+}
+
+nav.nav_top input.search_button {
+    visibility: hidden;
+}
+
+nav.nav_top > a.logout_button, p.login_username {
     --height: var(--font_big);
     display: block;
     width: max-content;
@@ -209,6 +234,7 @@ nav.nav_top > a.logout_button {
     margin-right: var(--nav_top_height);
     float: right;
     text-decoration: none;
+    line-height: 1.7;
     font-weight: bold;
     color: var(--color_light_2);
     /* background: red; */
@@ -406,7 +432,7 @@ div.message_feed li.flashed_message_item {
 
 div.fiber_feed {
     overflow: hidden;
-    padding: 2rem 1rem;
+    padding: 2rem 1rem 2rem 0;
 }
 
 div.fiber_item {
@@ -419,10 +445,6 @@ div.fiber_item {
     border-radius: 3rem 1.4rem 1.4rem 3rem;
     background: var(--color_light_2);
     /* box-shadow: 5px 5px 10px 0 rgba(50,50,50,0.2); */
-}
-
-a.fiber_item_link {
-    text-decoration: none;
 }
 
 div.fiber_item::before {
@@ -551,51 +573,39 @@ div.edit_fiber_wrapper li.flashed_message_item {
     /* color: red */
 }
 
-div.fiber_heading {
-    margin-bottom: var(--message_item_spacing);
-    /* background: red; */
-}
 
-div.fiber_heading > h1 {
-    text-align: center;
-}
+/* -------- Fiber overview items (in search and fibers) -------- */
 
-
-/* -------- Fiber match view -------- */
-
-div.fiber_match_feed {
-    padding: 2rem 1rem 1rem 2rem;
-    /* background: red; */
-}
-
-div.fiber_match_item {
+div.fiber_overview_item {
     margin-bottom: var(--message_item_spacing);
     border: var(--message_border_width) solid var(--color_main_1);
     border-radius: 1.4rem;
     background: var(--color_light_2);
 }
 
-div.fiber_match_item > div.fibername {
+div.fiber_overview_item > div.fibername {
     border-radius: 1.2rem 1.2rem 0 0;
     text-align: center;
     font-weight: bold;
-    font-size: var(--font_larger);
+    /* font-size: var(--font_larger); */
+    font-size: var(--font_big);
     color: var(--color_light_2);
     background: var(--color_main_1);
 }
 
-div.fiber_match_item > div.tag_area {
-    padding: 0.5rem;
+div.fiber_overview_item > div.tag_area {
+    padding: 0.5rem 0.5rem 0 0.5rem;
     display: flex;
     flex-flow: row wrap;
+    /* justify-content: flex-start; */
     /* justify-content: space-between; */
-    justify-content: space-around;
-    /* justify-content: center; */
+    /* justify-content: space-around; */
+    justify-content: center;
     gap: 0.4rem 0.8rem;
     /* background: red; */
 }
 
-div.fiber_match_item > div.tag_area > div.tag_item {
+div.fiber_overview_item > div.tag_area div.tag_item {
     /* margin: 0.3rem; */
     padding: 0 0.5rem;
     border: var(--message_border_width) solid var(--color_main_1);
@@ -605,8 +615,13 @@ div.fiber_match_item > div.tag_area > div.tag_item {
     background: var(--color_accent_2);
 }
 
-div.fiber_match_item > div.fiber_description {
-    padding: calc(var(--message_item_spacing) / 1.5);
+div.fiber_overview_item > div.tag_area div.tag_item:hover {
+    background: var(--color_accent_1);
+}
+
+div.fiber_overview_item > div.fiber_description {
+    padding: 1rem;
+    text-align: center;
     font-size: var(--font_medium);
     font-weight: bold;
     line-height: calc(1.25 * var(--font_medium));
@@ -614,10 +629,10 @@ div.fiber_match_item > div.fiber_description {
     /* background: red; */
 }
 
-div.fiber_match_item > button.join_fiber_button {
+div.fiber_overview_item > button.join_fiber_button {
     width: calc(100% - (2 * 1.4rem));
     height: 2.8rem; 
-    margin: 1.4rem;
+    margin: 0 1.4rem 1.4rem 1.4rem;
     border-style: none;
     border-radius: 1.4rem;
     font-size: var(--font_medium);
@@ -626,5 +641,28 @@ div.fiber_match_item > button.join_fiber_button {
     background: var(--color_accent_2);
 }
 
-div.fiber_match_item > button.join_fiber_button:hover {
+div.fiber_overview_item > button.join_fiber_button:hover {
     background: var(--color_accent_1);
+}
+
+
+/* -------- Fiber match view -------- */
+
+div.fiber_match_feed {
+    padding: 2rem 2rem 1rem 2rem;
+    /* background: red; */
+}
+
+div.fiber_match_feed > div.search_term_heading {
+    margin-bottom: var(--message_item_spacing);
+    border: var(--message_border_width) solid var(--color_main_1);
+    border-radius: 1.4rem;
+    background: var(--color_light_2);
+}
+
+div.fiber_match_feed > div.search_term_heading > h1 {
+    text-align: center;
+    font-weight: bold;
+    font-size: var(--font_hugeish);
+    color: var(--color_main_1);
+}

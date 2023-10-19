@@ -184,6 +184,22 @@ class Repository:
         fibers = result.fetchall()
         return fibers
 
+    def get_fibers_by_search_term(self, search_term):
+        query = """
+            SELECT F.fiber_id, F.owner_id, F.fibername, F.description, ARRAY_AGG(T.tag_id || ' ' || T.tag) tags 
+            FROM fibers F 
+                INNER JOIN fiber_tags FT 
+                ON F.fiber_id = FT.fiber_id 
+                    LEFT JOIN tags T 
+                    ON FT.tag_id = T.tag_id 
+            WHERE F.fibername ILIKE :search_term OR F.description ILIKE :search_term 
+            GROUP BY F.fiber_id
+        """
+        values = {"search_term": f"%{search_term}%"}
+        result = self.db.session.execute(text(query), values)
+        fibers = result.fetchall()
+        return fibers
+
     def associate_user_with_fiber(self, user_id, fiber_id):
         query = """
             INSERT INTO user_fibers
@@ -227,6 +243,17 @@ class Repository:
         result = self.db.session.execute(text(query))
         tags = result.fetchall()
         return tags
+
+    def get_tag_by_tag_id(self, tag_id):
+        query = """
+            SELECT tag_id, tag
+            FROM tags
+            WHERE tag_id = :tag_id
+        """
+        values = {"tag_id":tag_id} 
+        result = self.db.session.execute(text(query), values)
+        tag_row = result.fetchone()
+        return tag_row
 
     def associate_fiber_with_tag(self, fiber_id, tag_id):
         query = """
