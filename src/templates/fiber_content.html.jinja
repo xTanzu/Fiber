@@ -1,7 +1,11 @@
+{% import "macros/tag.html.jinja" as tag %}
 {% import "macros/message.html.jinja" as message %}
 {% import "macros/fiber.html.jinja" as fiber %}
 
 <div class="content_area">
+    <nav class="nav nav_left">
+        {{ tag.tag_listing(tags) }}
+    </nav>
     <div class="message_feed">
         {% if open_fiber %}
             {{ fiber.fiber_heading(open_fiber) }}
@@ -10,11 +14,15 @@
             {{ fiber.edit_fiber_form(edit_state, placeholder_fiber) }}
         {% else %}
             {{ message.message_listing(messages) }}
-            {{ message.message_input_form(open_fiber, placeholder_message) }}
         {% endif %}
     </div>
-    <div class="fiber_feed">
+    <nav class="nav nav_right">
         {{ fiber.fiber_listing(fibers) }}
-        {{ fiber.add_fiber_button() }}
-    </div>
+    </nav>    
 </div>
+<div class="controls_area">
+    <div></div>
+    <div>{{ message.message_input_form(open_fiber, placeholder_message) }}</div>
+    <div>{{ fiber.add_fiber_button() }}</div>
+</div>
+

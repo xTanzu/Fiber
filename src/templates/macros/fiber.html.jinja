@@ -1,11 +1,13 @@
 {% import "macros/flashing.html.jinja" as flashing %}
 
 {% macro fiber_listing(fibers) %}
-    {% if fibers %}
-        {% for fiber in fibers %}
-            {{ fiber_item(fiber) }}
-        {% endfor %}
-    {% endif %}
+    <div class="fiber_listing">
+        {% if fibers %}
+            {% for fiber in fibers %}
+                {{ fiber_item(fiber) }}
+            {% endfor %}
+        {% endif %}
+    </div>
 {% endmacro %}
 
 {% macro fiber_item(fiber) %}

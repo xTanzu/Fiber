@@ -240,19 +240,29 @@ nav.nav_top > a.logout_button, p.login_username {
     /* background: red; */
 }
 
+nav.nav_top > a.logout_button:hover {
+    opacity: 0.8;
+}
 
 /* -------- Left Nav -------- */
 
 nav.nav_left {
-    position: fixed;
+    /* position: fixed; */
+    overflow: hidden;
     top: var(--nav_top_height);
     left: 0;
     bottom: 0;
-    width: var(--nav_left_width);
+    /* width: var(--nav_left_width); */
     background: var(--color_accent_1);
 }
 
 div.tag_feed {
+    /* position: absolute; */
+    /* top: 0; */
+    /* bottom: 0; */
+    /* left: 0; */
+    /* right: -17px; */
+    /* overflow-y: scroll; */
     /* padding: calc(var(--message_item_spacing) / 2); */
     padding:  0.7rem;
     /* background: red; */
@@ -273,33 +283,79 @@ div.tag_feed div.tag_item {
     /* background: blue; */
 }
 
+div.tag_feed div.tag_item:hover {
+    opacity: 0.8;
+}
+
 
 /* -------- Main Content Area -------- */
 
 div.content_area {
     display: flex;
+    align-items: stretch;
     position: relative;
     top: var(--nav_top_height);
-    left: var(--nav_left_width);
-    width: calc(100% - var(--nav_left_width));
+    width: 100%;
+    height: calc(100% - var(--nav_top_height));
+    /* background: purple; */
 }
 
-div.content_area > div:first-child {
-    width: 75%;
-    /* background: var(--); */
+div.content_area > * {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;  /* Hide scrollbar Firefox */
+    -ms-overflow-style: none;  /* Hide scrollbar IE and Edge */
+}
+
+div.content_area > *::-webkit-scrollbar {
+    display: none;/* Hide scrollbar Chrome, Safari and Opera */
+}
+
+div.content_area > nav:first-child {
+    flex: 2;
+    /* background: red; */
 }
 
 div.content_area > div:nth-child(2) {
-    width: 25%;
-    /* background: var(--color_accent_1_light); */
+    flex: 8;
+    /* background: blue; */
+}
+
+div.content_area > nav:nth-child(3) {
+    flex: 3;
+    /* background: green; */
+}
+
+div.controls_area {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    /* height: 40px; */
+    display: flex;
+    align-items: stretch;
+    /* background: red; */
+}
+
+div.controls_area > div:first-child {
+    flex: 2;
+    /* background: red; */
+}
+
+div.controls_area > div:nth-child(2) {
+    flex: 8;
+    /* background: blue; */
+}
+
+div.controls_area > div:nth-child(3) {
+    flex: 3;
+    /* background: green; */
 }
 
 
 /* -------- Messages -------- */
 
 div.message_feed {
-    overflow: hidden;
-    padding: 2rem 1rem 2rem 2rem;
+    padding: 2rem 2rem 4rem 2rem;
 }
 
 div.message_item {
@@ -346,6 +402,8 @@ div.message_content {
     /* line-height: 1.5rem; */
     /* line-height: var(--font_larger); */
     /* line-height: var(--font_medium_large); */
+    word-break: break-all;
+    white-space: normal;
     color: var(--color_main_1)
     /* background: chartreuse; */
 }
@@ -371,21 +429,21 @@ div.message_item.sent_by_me > div.message_header {
     background: var(--color_accent_2);
 }
 
-form.message_input_form {
+div.message_input_form_wrapper {
     position: relative;
+    bottom: calc(var(--message_item_spacing) / 2);
+    left: calc(var(--message_item_spacing) / 2);
+    width: calc(100% - var(--message_item_spacing));
     /* background: red; */
 }
 
 form.message_input_form > textarea.message_content {
-    position: relative;
-    left: calc(2 * var(--message_item_spacing));
-    top: 0;
-    width: calc(100% - (2 * var(--message_item_spacing)));
+    width: 100%;
     height: 2.8rem;
     overflow: hidden;
-    padding: 0.7rem 2rem 0.5rem 1.4rem;
+    padding: 0.7rem 5.5rem 0.5rem 1.4rem;
+    border: var(--message_border_width) solid var(--color_main_1);
     border-radius: 1.4rem;
-    border: none;
     resize: none;
     font-family: var(--font_family);
     font-size: var(--font_medium);
@@ -393,6 +451,7 @@ form.message_input_form > textarea.message_content {
     line-height: calc(1.25 * var(--font_medium));
     color: var(--color_main_1);
     background: var(--color_light_2);
+    /* background: blue; */
 }
 
 form.message_input_form > textarea.message_content::placeholder {
@@ -430,9 +489,9 @@ div.message_feed li.flashed_message_item {
 
 /* -------- Fibers listing -------- */
 
-div.fiber_feed {
+div.fiber_listing {
     overflow: hidden;
-    padding: 2rem 1rem 2rem 0;
+    padding: 2rem 1rem 4rem 0;
 }
 
 div.fiber_item {
@@ -493,14 +552,19 @@ div.fiber_item > div.fiber_description::before {
 }
 
 button.add_fiber_button {
-    width: 100%;
+    position: relative;
+    bottom: calc(var(--message_item_spacing) / 2);
+    left: calc(var(--message_item_spacing) / 2);
+    width: calc(100% - var(--message_item_spacing));
     height: 2.8rem;
+    /* border: var(--message_border_width) solid var(--color_light_2); */
     border: none;
     border-radius: 1.4rem;
     font-size: var(--font_medium);
     font-weight: bold;
     color: var(--color_light_2);
     background: var(--color_accent_2);
+    /* background: var(--color_main_1); */
 }
 
 button.add_fiber_button:hover {
@@ -616,7 +680,7 @@ div.fiber_overview_item > div.tag_area div.tag_item {
 }
 
 div.fiber_overview_item > div.tag_area div.tag_item:hover {
-    background: var(--color_accent_1);
+    opacity: 0.8;
 }
 
 div.fiber_overview_item > div.fiber_description {

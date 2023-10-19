@@ -1,4 +1,4 @@
-<nav class="nav nav_left">
+{% macro tag_listing(tags) %}
     <div class="tag_feed">
         {% if tags %}
             {% for tag in tags %}
@@ -8,4 +8,4 @@
             {% endfor %}
         {% endif %}
     </div>
-</nav>
+{% endmacro %}

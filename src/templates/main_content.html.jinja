@@ -1,14 +1,22 @@
+{% import "macros/tag.html.jinja" as tag %}
 {% import "macros/flashing.html.jinja" as flashing %}
 {% import "macros/message.html.jinja" as message %}
 {% import "macros/fiber.html.jinja" as fiber %}
 
 <div class="content_area">
+    <nav class="nav nav_left">
+        {{ tag.tag_listing(tags) }}
+    </nav>
     <div class="message_feed">
         {{ flashing.list_flashed_messages() }}
         {{ message.message_listing(messages) }}
     </div>
-    <div class="fiber_feed">
+    <nav class="nav nav_right">
         {{ fiber.fiber_listing(fibers) }}
-        {{ fiber.add_fiber_button() }}
-    </div>
+    </nav>    
+</div>
+<div class="controls_area">
+    <div></div>    
+    <div></div>    
+    <div>{{ fiber.add_fiber_button() }}</div>    
 </div>
