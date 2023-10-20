@@ -185,7 +185,7 @@ class Repository:
         return fibers
 
     def get_fibers_by_search_term(self, search_term):
-        query = """
+        query_without_tag_matches = """
             SELECT F.fiber_id, F.owner_id, F.fibername, F.description, ARRAY_AGG(T.tag_id || ' ' || T.tag) tags 
             FROM fibers F 
                 INNER JOIN fiber_tags FT 
@@ -193,6 +193,24 @@ class Repository:
                     LEFT JOIN tags T 
                     ON FT.tag_id = T.tag_id 
             WHERE F.fibername ILIKE :search_term OR F.description ILIKE :search_term 
+            GROUP BY F.fiber_id
+        """
+        query = """
+            SELECT F.fiber_id, F.owner_id, F.fibername, F.description, ARRAY_AGG(T.tag_id || ' ' || T.tag) tags 
+            FROM fibers F 
+                INNER JOIN fiber_tags FT 
+                ON F.fiber_id = FT.fiber_id 
+                    LEFT JOIN tags T 
+                    ON FT.tag_id = T.tag_id 
+            WHERE F.fibername ILIKE :search_term 
+            OR F.description ILIKE :search_term 
+            OR F.fiber_id IN (
+                SELECT FT.fiber_id 
+                FROM fiber_tags FT 
+                    LEFT JOIN tags T 
+                    ON FT.tag_id = T.tag_id 
+                WHERE T.tag ILIKE :search_term 
+                GROUP BY FT.fiber_id) 
             GROUP BY F.fiber_id
         """
         values = {"search_term": f"%{search_term}%"}
