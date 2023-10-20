@@ -22,7 +22,7 @@
 </div>
 <div class="controls_area">
     <div></div>
-    <div>{{ message.message_input_form(open_fiber, placeholder_message) }}</div>
+    <div>{{ message.message_input_form(open_fiber, placeholder_message) if not edit_state }}</div>
     <div>{{ fiber.add_fiber_button() }}</div>
 </div>
 
