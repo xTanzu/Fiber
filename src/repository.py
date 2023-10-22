@@ -118,6 +118,42 @@ class Repository:
         self.db.session.commit()
         return fiber_id
 
+    def delete_fiber_and_all_its_contents_by_fiber_id(self, fiber_id):
+        query = """
+            WITH tags_to_delete AS (
+                DELETE FROM fiber_tags 
+                WHERE fiber_id = :fiber_id 
+                RETURNING tag_id
+            ),
+            tags_not_to_delete AS (
+                SELECT tag_id 
+                FROM fiber_tags 
+                WHERE fiber_id != :fiber_id 
+                    AND tag_id IN (SELECT * FROM tags_to_delete) 
+                GROUP BY tag_id 
+                HAVING COUNT(fiber_id) > 0
+            ),
+            delete_tags AS (
+                DELETE FROM tags 
+                WHERE tag_id IN (SELECT * FROM tags_to_delete) 
+                    AND tag_id NOT IN (SELECT * FROM tags_not_to_delete)
+            ),
+            delete_user_fibers AS (
+                DELETE FROM user_fibers 
+                WHERE fiber_id = :fiber_id
+            ),
+            delete_messages AS (
+                DELETE FROM messages 
+                WHERE fiber_id = :fiber_id
+            )
+            DELETE FROM fibers 
+            WHERE fiber_id = :fiber_id;
+        """
+        values = {"fiber_id": fiber_id}
+        self.db.session.execute(text(query), values)
+        self.db.session.commit()
+
+
     def fibername_exists(self, fibername):
         query = """
             SELECT 
@@ -218,6 +254,20 @@ class Repository:
         fibers = result.fetchall()
         return fibers
 
+    def get_member_count_by_fiber_id(self, fiber_id):
+        query = """
+            SELECT COALESCE(COUNT(UF.user_id), 0) member_count 
+            FROM fibers F 
+                LEFT JOIN user_fibers UF 
+                ON F.fiber_id = UF.fiber_id 
+            WHERE F.fiber_id = :fiber_id 
+            GROUP BY F.fiber_id
+        """
+        values = {"fiber_id": fiber_id}
+        result = self.db.session.execute(text(query), values)
+        member_count = result.fetchone()[0]
+        return member_count
+
     def associate_user_with_fiber(self, user_id, fiber_id):
         query = """
             INSERT INTO user_fibers
@@ -228,6 +278,24 @@ class Repository:
         values = {"user_id": user_id, "fiber_id": fiber_id}
         self.db.session.execute(text(query), values)
         self.db.session.commit()
+
+    def dissociate_user_from_fiber(self, user_id, fiber_id):
+        query = """
+            WITH UF_del AS (
+                DELETE FROM user_fibers 
+                WHERE fiber_id = :fiber_id AND user_id = :user_id 
+                RETURNING fiber_id
+                ) 
+            SELECT F.fibername 
+            FROM fibers F 
+                INNER JOIN UF_del 
+                ON F.fiber_id = UF_del.fiber_id
+        """
+        values = {"user_id": user_id, "fiber_id": fiber_id}
+        result = self.db.session.execute(text(query), values)
+        fibername = result.fetchone()[0]
+        self.db.session.commit()
+        return fibername
 
     def insert_tag_if_not_exists(self, tag):
         query = """

@@ -32,7 +32,7 @@
             <input type="text" class="edit_fiber_field" name="fibername" placeholder="name for your fiber" value="{{ placeholder_fiber.fibername }}"><br>
             <textarea class="edit_fiber_field" name="fiber_description" placeholder="describe your fiber">{{ placeholder_fiber.description }}</textarea><br>
             <textarea class="edit_fiber_field" name="fiber_tags" placeholder="give your fiber a list descriptive tags separated by space">{{ placeholder_fiber.tags }}</textarea><br>
-            <input class="edit_fiber_button" type="submit" value="{{ edit_state }}">
+            <input class="edit_fiber_button button" type="submit" value="{{ edit_state }}">
             {{ flashing.list_flashed_messages() }}
         </form>        
     </div>
@@ -49,6 +49,10 @@
             {% endfor %}
         </div>
         <div class="fiber_description">{{ fiber.markupsafe_description() }}</div>
+        <div class="fiber_button_holder">
+            <button class="fiber_button edit_fiber_button" onclick="location.href='{{ url_for("edit_fiber", fiber_id=fiber.fiber_id) }}'">Edit Fiber</button>
+            <button class="fiber_button leave_fiber_button" onclick="location.href='{{ url_for("leave_fiber", fiber_id=fiber.fiber_id) }}'">Leave Fiber</button>
+        </div>
     </div>    
 {% endmacro %}
 

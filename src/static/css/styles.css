@@ -100,6 +100,11 @@ a.no_decoration {
     text-decoration: none;
 }
 
+button, *.button {
+    cursor: pointer;
+}
+
+
 /* -------- Credentials area -------- */
 
 div.credentials_box {
@@ -707,6 +712,34 @@ div.fiber_overview_item > button.join_fiber_button {
 
 div.fiber_overview_item > button.join_fiber_button:hover {
     background: var(--color_accent_1);
+}
+
+div.fiber_overview_item > div.fiber_button_holder {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 1.4rem;
+}
+
+div.fiber_button_holder > button.fiber_button {
+    width: 40%;
+    height: 2.8rem; 
+    border-style: none;
+    border-radius: 1.4rem;
+    font-size: var(--font_medium);
+    font-weight: bold;
+    color: var(--color_light_2);
+}
+
+div.fiber_button_holder > button.fiber_button:hover {
+    opacity: 0.8;
+}
+
+div.fiber_button_holder > button.edit_fiber_button {
+    background: var(--color_main_1);
+}
+
+div.fiber_button_holder > button.leave_fiber_button {
+    background: var(--color_accent_2);
 }
 
 

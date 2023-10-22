@@ -126,6 +126,23 @@ def join_fiber(fiber_id):
         flash(str(e))
     return redirect(url_for("create_fiber"))
 
+@app.route("/edit_fiber/<fiber_id>", methods=["GET"])
+def edit_fiber(fiber_id):
+    pass
+
+@app.route("/leave_fiber/<fiber_id>", methods=["GET"])
+def leave_fiber(fiber_id):
+    if not application.is_logged_in():
+        return redirect(url_for("login"))
+    if not application.user_is_member_in_fiber(fiber_id):
+        flash("You are not a member of this fiber")
+    try:
+        fibername = application.resign_user_from_fiber(fiber_id)
+        flash(f"You left {fibername}")
+    except (ValueError, DatabaseException) as e:
+        flash(str(e))
+    return redirect(url_for("index"))
+
 @app.route("/search", methods=["GET"])
 def search():
     if not application.is_logged_in():

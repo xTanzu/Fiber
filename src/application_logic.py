@@ -121,13 +121,31 @@ class Application_logic:
         user_id = session["logged_in_user"]["user_id"]
         fiber = self.repository.get_fiber_by_fiber_id(fiber_id)
         if not fiber:
-            raise ValueError("Selected fiber does not exist")
+            raise ValueError("fiber does not exist")
         if self.user_is_member_in_fiber(fiber_id):
-            raise ValueError("User is already a member")
+            raise ValueError("user is already a member")
         try:
             self.repository.associate_user_with_fiber(user_id, fiber_id)
         except Exception as e:
             raise DatabaseException("error during inserting user to fiber")
+
+    def resign_user_from_fiber(self, fiber_id):
+        user_id = session["logged_in_user"]["user_id"]
+        fiber = self.repository.get_fiber_by_fiber_id(fiber_id)
+        if not fiber:
+            raise ValueError("fiber does not exist")
+        if not self.user_is_member_in_fiber(fiber_id):
+            raise ValueError("user is not a member in this fiber")
+        try:
+            fibername = self.repository.dissociate_user_from_fiber(user_id, fiber_id)
+            member_count = self.repository.get_member_count_by_fiber_id(fiber_id)
+            print(member_count, file=sys.stdout)
+            if member_count == 0:
+                self.repository.delete_fiber_and_all_its_contents_by_fiber_id(fiber_id)
+            return fibername
+        except Exception as e:
+            print(str(e), file=sys.stdout)
+            raise DatabaseException("error during removing user from fiber")
 
     def user_is_member_in_fiber(self, fiber_id):
         user_id = session["logged_in_user"]["user_id"]
