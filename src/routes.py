@@ -113,7 +113,7 @@ def fibers_by_tag(tag_id):
     fiber_matches = application.get_fibers_by_tag_id(tag_id)
     common_tag = application.get_tag_by_tag_id(tag_id)
     fibers = application.get_users_fibers()
-    return render_template("fiber_matches.html.jinja", tags=tags, fiber_matches=fiber_matches, search_term=common_tag, fibers=fibers) 
+    return render_template("fiber_matches.html.jinja", tags=tags, fiber_matches=fiber_matches, search_term=common_tag.markupsafe_tag, fibers=fibers) 
 
 @app.route("/join_fiber/<fiber_id>", methods=["GET"])
 def join_fiber(fiber_id):
@@ -177,5 +177,5 @@ def search():
     tags = application.get_display_tags()
     fiber_matches = application.get_fibers_by_search_term(search_term)
     fibers = application.get_users_fibers()
-    return render_template("fiber_matches.html.jinja", tags=tags, fiber_matches=fiber_matches, search_term=search_term, fibers=fibers) 
+    return render_template("fiber_matches.html.jinja", tags=tags, fiber_matches=fiber_matches, search_term=escape(search_term), fibers=fibers) 
 
