@@ -13,9 +13,9 @@
 {% macro fiber_item(fiber) %}
     <a class="no_decoration" href="{{ url_for("view_fiber", fiber_id=fiber.fiber_id) }}">
         <div class="fiber_item">
-            <div class="fibername">{{ fiber.markupsafe_fibername() }}</div>
+            <div class="fibername">{{ fiber.markupsafe_fibername }}</div>
             <div class="fiber_description">
-                <p>{{ fiber.markupsafe_description() }}</p>
+                <p>{{ fiber.markupsafe_description }}</p>
             </div>
         </div>
     </a>
@@ -28,10 +28,10 @@
 {% macro edit_fiber_form(edit_state, placeholder_fiber) %}
     <div class="edit_fiber_wrapper">
         <div class="edit_fiber_header">{{ edit_state }} fiber</div>
-        <form action="/{{ edit_state }}_fiber" class="edit_fiber_form" method="POST">
-            <input type="text" class="edit_fiber_field" name="fibername" placeholder="name for your fiber" value="{{ placeholder_fiber.fibername }}"><br>
-            <textarea class="edit_fiber_field" name="fiber_description" placeholder="describe your fiber">{{ placeholder_fiber.description }}</textarea><br>
-            <textarea class="edit_fiber_field" name="fiber_tags" placeholder="give your fiber a list descriptive tags separated by space">{{ placeholder_fiber.tags }}</textarea><br>
+        <form action="{{ url_for((edit_state + "_fiber"), fiber_id=placeholder_fiber.fiber_id) }}" class="edit_fiber_form" method="POST">
+            <input type="text" class="edit_fiber_field" name="fibername" placeholder="name for your fiber" value="{{ placeholder_fiber.markupsafe_fibername }}"><br>
+            <textarea class="edit_fiber_field" name="fiber_description" placeholder="describe your fiber">{{ placeholder_fiber.markupsafe_description }}</textarea><br>
+            <textarea class="edit_fiber_field" name="fiber_tags" placeholder="give your fiber a list descriptive tags separated by space">{{ placeholder_fiber.markupsafe_tags_string }}</textarea><br>
             <input class="edit_fiber_button button" type="submit" value="{{ edit_state }}">
             {{ flashing.list_flashed_messages() }}
         </form>        
@@ -40,15 +40,15 @@
 
 {% macro fiber_heading(fiber) %}
     <div class="fiber_overview_item">
-        <div class="fibername">{{ fiber.markupsafe_fibername() }}</div>
+        <div class="fibername">{{ fiber.markupsafe_fibername }}</div>
         <div class="tag_area">
             {% for tag in fiber.tags %}
                 <a class="no_decoration" href="{{ url_for("fibers_by_tag", tag_id=tag.tag_id) }}">
-                    <div class="tag_item">{{ tag.markupsafe_tag() }}</div>
+                    <div class="tag_item">{{ tag.markupsafe_tag }}</div>
                 </a>                
             {% endfor %}
         </div>
-        <div class="fiber_description">{{ fiber.markupsafe_description() }}</div>
+        <div class="fiber_description">{{ fiber.markupsafe_description }}</div>
         <div class="fiber_button_holder">
             <button class="fiber_button edit_fiber_button" onclick="location.href='{{ url_for("edit_fiber", fiber_id=fiber.fiber_id) }}'">Edit Fiber</button>
             <button class="fiber_button leave_fiber_button" onclick="location.href='{{ url_for("leave_fiber", fiber_id=fiber.fiber_id) }}'">Leave Fiber</button>
@@ -75,15 +75,15 @@
 
 {% macro fiber_match_item(fiber) %}
     <div class="fiber_overview_item">
-        <div class="fibername">{{ fiber.markupsafe_fibername() }}</div>
+        <div class="fibername">{{ fiber.markupsafe_fibername }}</div>
         <div class="tag_area">
             {% for tag in fiber.tags %}
                 <a class="no_decoration" href="{{ url_for("fibers_by_tag", tag_id=tag.tag_id) }}">
-                    <div class="tag_item">{{ tag.markupsafe_tag() }}</div>
+                    <div class="tag_item">{{ tag.markupsafe_tag }}</div>
                 </a>                
             {% endfor %}
         </div>
-        <div class="fiber_description">{{ fiber.markupsafe_description() }}</div>
+        <div class="fiber_description">{{ fiber.markupsafe_description }}</div>
         <button class="join_fiber_button" onclick="location.href='{{ url_for("join_fiber", fiber_id=fiber.fiber_id) }}'">Join this Fiber</button>
     </div>    
 {% endmacro %}

@@ -5,6 +5,7 @@ class Tag:
         self.tag_id = tag_id
         self.tag = tag
 
+    @property
     def markupsafe_tag(self):
         return escape(self.tag)
 

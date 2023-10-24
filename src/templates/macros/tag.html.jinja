@@ -3,7 +3,7 @@
         {% if tags %}
             {% for tag in tags %}
                 <a href="{{ url_for('fibers_by_tag', tag_id=tag.tag_id) }}">
-                    <div class="tag_item">{{ tag.markupsafe_tag() }}</div>
+                    <div class="tag_item">{{ tag.markupsafe_tag }}</div>
                 </a>
             {% endfor %}
         {% endif %}

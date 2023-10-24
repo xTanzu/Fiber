@@ -89,10 +89,39 @@ class Application_logic:
         tags = list(set(tags.split()))
         try:
             fiber_id = self.repository.insert_new_fiber(owner_id, fibername, description)
-            for tag in tags:
-                tag_id = self.repository.insert_tag_if_not_exists(tag)
-                self.repository.associate_fiber_with_tag(fiber_id, tag_id)
+            # for tag in tags:
+            #     tag_id = self.repository.insert_tag_if_not_exists(tag)
+            #     self.repository.associate_fiber_with_tag(fiber_id, tag_id)
+            # Yllä olevan korvaa tämä uusi alla oleva metodi, pidän tässä ihan omana referenssinä
+            self.repository.insert_tag_list(fiber_id, tags)
             return fiber_id
+        except Exception as e:
+            raise DatabaseException("error during inserting new fiber to database") from e
+
+    def edit_fiber(self, fiber_id, fibername, description, tags):
+        fiber_row = self.repository.get_fiber_by_fiber_id(fiber_id)
+        current = Fiber(**fiber_row._asdict())
+        fiber_info_changed = False
+        if fibername != current.fibername:
+            validation.validate_name(fibername, name_type="fiber", exra_chars=" ")
+            if self.repository.fibername_exists(fibername):
+                raise ValueError(f"fibername \"{fibername}\" already exists");
+            fiber_info_changed = True
+        if description != current.description:
+            validation.validate_text(description, text_type="description")
+            fiber_info_changed = True
+        tags_current = set(current.tag_string_list)
+        tags_edited = set(tags.split())
+        tags_not_changed = tags_current.intersection(tags_edited)
+        tags_new = tags_edited - tags_not_changed
+        tags_removed = tags_current - tags_not_changed
+        try:
+            if fiber_info_changed:
+                self.repository.update_fiber_info(fiber_id, fibername, description)
+            if 0 < len(tags_new):
+                self.repository.insert_tag_list(fiber_id, tags_new)
+            if 0 < len(tags_removed):
+                self.repository.remove_tag_list(fiber_id, tags_removed)
         except Exception as e:
             raise DatabaseException("error during inserting new fiber to database") from e
 
@@ -153,6 +182,14 @@ class Application_logic:
         if not member_entry:
             return False
         return True
+
+    def user_is_owner_of_fiber(self, fiber_id):
+        user_id = session["logged_in_user"]["user_id"]
+        owner_id_row = self.repository.get_fiber_owner_by_fiber_id(fiber_id)
+        if owner_id_row is None:
+            return False
+        owner_id = owner_id_row[0]
+        return user_id == owner_id
 
     def get_display_tags(self):
         tag_rows = self.repository.get_all_tags()

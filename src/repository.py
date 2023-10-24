@@ -153,6 +153,17 @@ class Repository:
         self.db.session.execute(text(query), values)
         self.db.session.commit()
 
+    def update_fiber_info(self, fiber_id, fibername, description):
+        query = """
+            UPDATE fibers 
+            SET 
+                fibername = :fibername, 
+                description = :description 
+            WHERE fiber_id = :fiber_id;
+        """
+        values = {"fiber_id": fiber_id, "fibername": fibername, "description": description}
+        self.db.session.execute(text(query), values)
+        self.db.session.commit()
 
     def fibername_exists(self, fibername):
         query = """
@@ -268,6 +279,17 @@ class Repository:
         member_count = result.fetchone()[0]
         return member_count
 
+    def get_fiber_owner_by_fiber_id(self, fiber_id):
+        query = """
+            SELECT owner_id 
+            FROM fibers 
+            WHERE fiber_id = :fiber_id
+        """
+        values = {"fiber_id": fiber_id}
+        result = self.db.session.execute(text(query), values)
+        member_count = result.fetchone()
+        return member_count
+
     def associate_user_with_fiber(self, user_id, fiber_id):
         query = """
             INSERT INTO user_fibers
@@ -298,6 +320,7 @@ class Repository:
         return fibername
 
     def insert_tag_if_not_exists(self, tag):
+        # korvattu metodilla insert_tag_list(), tekee enemmän kerralla
         query = """
             WITH s AS (
                 SELECT tag_id 
@@ -320,6 +343,81 @@ class Repository:
         tag_id = result.fetchone()[0]
         self.db.session.commit()
         return tag_id
+
+    def insert_tag_list(self, fiber_id, tags):
+        query = """
+            WITH new_tag_known AS (
+                SELECT tag_id 
+                FROM tags 
+                WHERE tag = :tag
+            ),
+            new_tag_not_known AS (
+                INSERT INTO tags(tag) 
+                    SELECT :tag 
+                    WHERE NOT EXISTS (
+                        SELECT 1 
+                        FROM tags 
+                        WHERE tag = :tag
+                    ) 
+                RETURNING tag_id
+            ),
+            linkable_tag AS (
+                SELECT tag_id 
+                FROM new_tag_known 
+                UNION ALL 
+                SELECT tag_id 
+                FROM new_tag_not_known
+            )
+            INSERT INTO fiber_tags(fiber_id, tag_id) 
+                SELECT :fiber_id fiber_id, LT.tag_id 
+                FROM linkable_tag LT
+        """
+        values = [{"fiber_id": fiber_id, "tag": tag} for tag in tags]
+        self.db.session.execute(text(query), values)
+        self.db.session.commit()
+
+    def remove_tag_list(self, fiber_id, tags):
+        print("pöö2", file=sys.stdout)
+        query = """
+            WITH del_tag_id AS (
+                SELECT tag_id 
+                FROM tags 
+                WHERE tag = :tag
+            ),
+            delete_fiber_tag AS (
+                DELETE FROM fiber_tags 
+                WHERE fiber_id = :fiber_id 
+                AND tag_id IN (
+                    SELECT tag_id 
+                    FROM del_tag_id
+                )
+            ),
+            tag_still_in_use AS (
+                SELECT tag_id 
+                FROM fiber_tags 
+                WHERE fiber_id != :fiber_id 
+                AND tag_id IN (
+                    SELECT tag_id 
+                    FROM del_tag_id
+                ) 
+                GROUP BY tag_id 
+                HAVING COUNT(fiber_id) > 0
+            )
+            DELETE FROM tags 
+            WHERE tag_id IN (
+                SELECT tag_id 
+                FROM del_tag_id
+            )
+            AND tag_id NOT IN (
+                SELECT tag_id 
+                FROM tag_still_in_use
+            )
+        """
+        values = [{"fiber_id": fiber_id, "tag": tag} for tag in tags]
+        print("pöö3", file=sys.stdout)
+        print(values, file=sys.stdout)
+        self.db.session.execute(text(query), values)
+        self.db.session.commit()
 
     def get_all_tags(self):
         query = """

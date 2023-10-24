@@ -5,6 +5,7 @@ from app import app
 
 from application_logic import Application_logic
 from exceptions import DatabaseException
+from entities.fiber import Fiber
 
 from markupsafe import escape
 
@@ -73,10 +74,11 @@ def create_fiber():
         }
         try:
             fiber_id = application.create_fiber(**fiber)
-            return redirect(f"fiber/{fiber_id}")
+            return redirect(url_for("view_fiber", fiber_id=fiber_id))
         except (ValueError, DatabaseException) as e:
             flash(e)
-            placeholder_fiber = {key:escape(value) for (key,value) in fiber.items()}
+            fiber["tags"] = fiber["tags"].split()
+            placeholder_fiber = Fiber(**fiber)
     tags = application.get_display_tags()
     fibers = application.get_users_fibers()
     return render_template("fiber.html.jinja", edit_state="create", tags=tags, fibers=fibers, placeholder_fiber=placeholder_fiber)
@@ -126,9 +128,33 @@ def join_fiber(fiber_id):
         flash(str(e))
     return redirect(url_for("create_fiber"))
 
-@app.route("/edit_fiber/<fiber_id>", methods=["GET"])
+@app.route("/edit_fiber/<fiber_id>", methods=["GET", "POST"])
 def edit_fiber(fiber_id):
-    pass
+    if not application.is_logged_in():
+        return redirect(url_for("login"))
+    if not application.user_is_owner_of_fiber(fiber_id):
+        flash("You cannot edit this fiber")
+        return redirect(url_for("view_fiber", fiber_id=fiber_id))
+    editable_fiber = None
+    if request.method == "POST":
+        fiber = {
+            "fiber_id": fiber_id,
+            "fibername": request.form["fibername"],
+            "description": request.form["fiber_description"],
+            "tags": request.form["fiber_tags"]
+        }
+        try:
+            application.edit_fiber(**fiber)
+            return redirect(url_for("view_fiber", fiber_id=fiber_id))
+        except (ValueError, DatabaseException) as e:
+            flash(e)
+            fiber["tags"] = fiber["tags"].split()
+            editable_fiber = Fiber(**fiber)
+    if request.method == "GET":
+        editable_fiber = application.get_fiber_by_fiber_id(fiber_id)
+    tags = application.get_display_tags()
+    fibers = application.get_users_fibers()
+    return render_template("fiber.html.jinja", edit_state="edit", tags=tags, fibers=fibers, placeholder_fiber=editable_fiber)
 
 @app.route("/leave_fiber/<fiber_id>", methods=["GET"])
 def leave_fiber(fiber_id):
@@ -152,3 +178,4 @@ def search():
     fiber_matches = application.get_fibers_by_search_term(search_term)
     fibers = application.get_users_fibers()
     return render_template("fiber_matches.html.jinja", tags=tags, fiber_matches=fiber_matches, search_term=search_term, fibers=fibers) 
+
